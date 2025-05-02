@@ -75,9 +75,9 @@
 
   <header class="bg-secondary p-4 shadow-lg flex justify-between items-center">
     <div class="flex items-center space-x-4">
-      <!-- Logo Image - now larger, rounded, and not a link -->
-      <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" class="logo h-14 w-14">
-      <!-- Site Name -->
+      <a href="{% url 'home' %}">
+        <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" class="logo h-14 w-14">
+      </a>
     </div>
     <nav class="flex items-center space-x-4">
       {% if user.is_authenticated %}
