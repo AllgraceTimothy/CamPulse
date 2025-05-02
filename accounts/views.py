@@ -22,6 +22,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
+from .pipeline import social_registration_success_message
 
 def home_view(request):
   posts = Post.objects.all().order_by('-created_at')
@@ -43,6 +44,7 @@ def register_view(request):
             
             messages.success(request, 'Registration successful! Please check your email to verify your account.')
             return redirect('login')
+
     else:
         form = UserRegisterForm()
     return render(request, 'accounts/register.html', {'form': form})

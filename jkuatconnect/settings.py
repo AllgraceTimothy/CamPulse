@@ -83,6 +83,7 @@ SOCIAL_AUTH_PIPELINE = (
     'accounts.pipeline.send_verification_email',
     'accounts.pipeline.force_password_set',
     'accounts.pipeline.redirect_to_password_set',
+    'accounts.pipeline.social_registration_success_message',
     'accounts.middleware.SocialAuthPasswordMiddleware'
     'social_core.pipeline.user.user_details',
     'accounts.pipeline.require_password_set',

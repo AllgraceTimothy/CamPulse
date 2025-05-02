@@ -5,13 +5,12 @@ from .models import Profile
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from .utils import generate_random_password, send_temp_password_email
+from django.contrib import messages
+from social_core.pipeline.user import get_username
 
 def validate_student_email(strategy, details, backend, user=None, *args, **kwargs):
     email = details.get('email')
     pattern = r'^[a-zA-Z0-9_.+-]+\@students.[a-zA-Z]+\.ac\.ke$'
-    
-    if backend.name == 'google-oauth2':
-        return None
         
     if not email or not re.fullmatch(pattern, email):
         raise ValidationError('You must sign up with a valid Kenyan student email in the format: [yourname]@students.[school].ac.ke')
@@ -57,6 +56,17 @@ def set_temporary_password(strategy, details, backend, user=None, *args, **kwarg
         
         strategy.session_set('force_password_set', True)
         strategy.session_set('is_temp_password', True)
+    return None
+
+def social_registration_success_message(strategy, backend, user, response, is_new=False, *args, **kwargs):
+    if is_new and backend.name == 'google-oauth2':
+        request = strategy.request if hasattr(strategy, 'request') else None
+        if request:
+            messages.success(
+                request,
+                'Your account has been created successfuly.\nYou will receive an email with temporary login credentials.\nUse them to login and set your password.'
+            )
+            request.session.save()
     return None
 
 def check_temp_password_on_login(strategy, user, response, *args, **kwargs):
