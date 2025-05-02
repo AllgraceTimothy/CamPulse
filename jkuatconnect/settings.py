@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 SITE_ID = 1
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = ['campulse.up.railway.app', 'your-custom-domain.com', 'localhost']
 SITE_URL = config('SITE_URL')
 
 # Application definition
