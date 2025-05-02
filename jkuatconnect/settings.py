@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 SITE_ID = 1
-ALLOWED_HOSTS = ['campulse.up.railway.app', 'your-custom-domain.com', 'localhost']
+ALLOWED_HOSTS = ['campulse.up.railway.app', '127.0.0.1', 'localhost']
 SITE_URL = config('SITE_URL')
 
 # Application definition
@@ -201,7 +201,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL  = '/media/'
