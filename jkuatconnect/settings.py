@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 AUTH_USER_MODEL = 'accounts.User'
 
 from pathlib import Path
-import os
+import os, ast
 import dj_database_url
 from decouple import config, Csv
 from django.contrib.messages import constants as messages
@@ -118,7 +118,7 @@ CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = True 
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = ast.literal_eval(os.getenv("CSRF_TRUSTED_ORIGINS", "[]"))
 
 ROOT_URLCONF = 'jkuatconnect.urls'
 
