@@ -14,6 +14,14 @@
   
   <div class="text-center max-w-4xl relative z-10">
     <div class="animate-fadeIn">
+      <!-- Added Logo Here -->
+      <div class="flex justify-center mb-8">
+        <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" 
+             class="logo h-32 w-32 mx-auto rounded-full object-cover 
+                    border-2 border-accent/20 hover:border-accent/40
+                    transition-all duration-300">
+      </div>
+      
       <span class="text-4xl md:text-6xl font-extrabold text-white mb-4 block">Hii there 👋🏽</span>
       <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">
         Welcome to <span class="text-accent">CamPulse</span>
@@ -277,6 +285,17 @@
   
   .overflow-y-auto::-webkit-scrollbar-thumb:hover {
     background: #6b7280;
+  }
+
+  /* Logo styling */
+  .logo {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
   }
 </style>
 {% endblock %}
