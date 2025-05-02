@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 AUTH_USER_MODEL = 'accounts.User'
 
 from pathlib import Path
+from urllib.parse import urlparse
 import os, ast
 import dj_database_url
 from decouple import config, Csv
@@ -26,10 +27,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 SITE_ID = 1
 ALLOWED_HOSTS = ['campulse.up.railway.app', '127.0.0.1', 'localhost']
-SITE_URL = config('SITE_URL')
+SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
 
 # Application definition
 
@@ -204,7 +205,11 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_URL  = '/media/'
+if DEBUG:
+    MEDIA_URL = '/media/'
+else:
+    MEDIA_URL = f'{SITE_URL}/media/'
+    
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
