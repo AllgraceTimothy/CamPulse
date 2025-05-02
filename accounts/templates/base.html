@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CamPulse</title>
+  <link rel="icon" href="{% static 'favicon.png' %}" sizes="32x32">
+  <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+  <!-- Tailwind CSS is already linked here -->
+   <!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          primary: '#0f172a',   // background
+          secondary: '#1e293b', // cards and nav
+          accent: '#3b82f6',    // buttons/links
+        },
+      }
+    }
+  }
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  body { font-family: 'Orbitron', sans-serif; }
+  
+  .nav-icon {
+    transition: all 0.3s ease;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+  
+  .nav-icon i {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .nav-icon span {
+    font-size: 0.75rem;
+  }
+  
+  .nav-icon:hover {
+    color: #3b82f6;
+    transform: translateY(-3px);
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+  }
+  
+  .nav-icon:hover i {
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7));
+  }
+
+  .logo {
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    transition: transform 0.3s ease;
+  }
+
+  .logo:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+</head>
+<body class="bg-primary text-white font-sans min-h-screen">
+
+  <header class="bg-secondary p-4 shadow-lg flex justify-between items-center">
+    <div class="flex items-center space-x-4">
+      <!-- Logo Image - now larger, rounded, and not a link -->
+      <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" class="logo h-14 w-14">
+      <!-- Site Name -->
+      <h1 class="text-2xl font-bold text-accent">CamPulse</h1>
+    </div>
+    <nav class="flex items-center space-x-4">
+      <a href="{% url 'home' %}" class="nav-icon" title="Home">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'my_posts' %}" class="nav-icon" title="My Posts">
+        <i class="fas fa-newspaper"></i>
+        <span>My Posts</span>
+      </a>
+      <a href="{% url 'inbox' %}" class="nav-icon" title="Chats">
+        <i class="fas fa-comments"></i>
+        <span>Chats</span>
+      </a>
+      <a href="{% url 'dashboard' %}" class="nav-icon" title="My Profile">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a>
+      <form method="POST" action="{% url 'logout' %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="nav-icon hover:text-red-400" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </form>
+      
+      {% else %}
+      <a href="{% url 'login' %}" class="nav-icon" title="Login">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Login</span>
+      </a>
+      <a href="{% url 'register' %}" class="nav-icon" title="Register">
+        <i class="fas fa-user-plus"></i>
+        <span>Register</span>
+      </a>
+      {% endif %}
+    </nav>
+
+    {% if messages %}
+    <div id="flash-messages" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full px-4">
+      {% for message in messages %}
+        <div class="bg-gray-800 border-l-4 p-4 mb-2 rounded shadow 
+                    {% if message.tags == 'success' %}border-green-400 text-green-300
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}border-red-400 text-red-300
+                    {% elif message.tags == 'warning' %}border-yellow-400 text-yellow-300
+                    {% else %}border-blue-400 text-blue-300{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <script>
+    // Auto-dismiss flash messages ater 3 seconds
+    setTimeout(() => {
+      const flashMessages = document.getElementById('flash-messages');
+      if (flashMessages) {
+        flashMessages.style.opacity = '0';
+        flashMessages.style.transition = 'opacity 0.5s ease';
+
+        // Fully remove form DOM after fade-out
+        setTimeout(() => flashMessages.remove(), 500);
+      }
+    }, 3000);
+  </script>
+  
+  </header>
+
+  <main class="p-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bg-secondary p-4 text-center text-sm text-gray-400">
+    &copy; 2025 CamPulse | All rights reserved | &copy; AllgraceTimothy
+  </footer>
+
+</body>
+</html>

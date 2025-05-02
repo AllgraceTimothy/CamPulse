@@ -1,0 +1,741 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+  <!-- Chat Header with Glowing Effects -->
+  <div class="flex items-center justify-between mb-6 p-4 bg-gray-800/50 border border-pink-900/30 rounded-xl backdrop-blur-sm">
+    <div class="flex items-center space-x-3">
+      {% for user in chat.participants.all %}
+        {% if user != request.user %}
+          {% if user.profile.profile_pic %}
+            <div class="relative group">
+              <img src="{{ user.profile.profile_pic.url }}" alt="Profile" 
+                   class="h-12 w-12 rounded-full border-2 border-pink-400/50 object-cover">
+              <div class="absolute -inset-1 rounded-full bg-pink-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+          {% else %}
+            <div class="h-12 w-12 rounded-full bg-gradient-to-br from-pink-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+              {{ user.username|first|upper }}
+            </div>
+          {% endif %}
+          <div>
+            <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-300 tracking-wider">
+              {{ user.username }}
+            </h2>
+            <div class="flex items-center mt-1">
+              <div class="h-2 w-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></div>
+              <p class="text-xs text-gray-400 font-mono tracking-wider">ONLINE</p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="text-xs font-mono text-pink-300/50 tracking-wider">
+      CHANNEL ID: {{ chat.id }}
+    </div>
+  </div>
+
+  <!-- Messages Container with Futuristic Design -->
+  <div id="chat-messages" class="mb-4 p-4 h-[60vh] overflow-y-auto bg-gradient-to-b from-purple-900/20 via-gray-900/30 to-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-800/50 shadow-inner custom-scrollbar">
+    {% for text in texts %}
+      <div class="message {% if text.sender == request.user %}my-message{% else %}their-message{% endif %} mb-6 group"
+           data-message-id="{{ text.id }}"
+           data-sender-id="{{ text.sender.id }}">
+        <div class="flex items-end space-x-2 {% if text.sender == request.user %}flex-row-reverse{% endif %}">
+          <!-- Profile Picture -->
+          <div class="relative">
+            {% if text.sender.profile.profile_pic %}
+              <img src="{{ text.sender.profile.profile_pic.url }}" alt="Profile" 
+                   class="h-10 w-10 rounded-full border border-pink-400/50 object-cover">
+            {% else %}
+              <div class="h-10 w-10 rounded-full bg-gradient-to-br from-pink-600 to-purple-600 flex items-center justify-center text-white font-bold">
+                {{ text.sender.username|first|upper }}
+              </div>
+            {% endif %}
+            <div class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-green-400 border-2 border-gray-800"></div>
+          </div>
+          
+          <!-- Message Bubble -->
+          <div class="relative max-w-xs md:max-w-md lg:max-w-lg">
+            <div class="{% if text.sender == request.user %}bg-gradient-to-r from-pink-600/90 to-purple-600/90 text-white{% else %}bg-gray-800/90 text-gray-100 border border-gray-700/50{% endif %} 
+            rounded-2xl p-4 px-5 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+              
+              <!-- Action Buttons (Top Right) -->
+              {% if text.sender == request.user and not text.deleted_for_all %}
+              <div class="space-x-0.95 absolute -top-2 right-0.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <!-- Forward Button -->
+                  <button class="forward-btn bg-gray-800 rounded-full p-1.5 hover:bg-gray-700"
+                  onclick="openForwardModal({{ text.id }})"
+                  title="Forward message">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              </button>
+                <!-- Copy Button -->
+                <button class="copy-btn bg-gray-800 rounded-full p-1.5 hover:bg-gray-700"
+                        onclick="copyMessage({{ text.id }})"
+                        title="Copy message">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  </svg>
+                </button>
+              
+                <!-- Edit Button -->
+                <button class="edit-btn bg-gray-800 rounded-full p-1.5"
+                        onclick="startEdit({{ text.id }}, '{{ text.content|escapejs }}')">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              
+                <!-- Delete Button -->
+                <button class="delete-btn bg-gray-800 rounded-full p-1.5 hover:bg-gray-700"
+                        onclick="confirmDelete({{ text.id }})">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+              
+              {% endif %}
+              
+              <!-- Corner Accent -->
+              <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-400 to-purple-500 opacity-70 transition-opacity duration-300"></div>
+              
+              <!-- Message Content -->
+              <div class="message-content relative z-10">
+                {% if text.deleted_for_all %}
+                  <em class="text-pink-300/70 italic">[MESSAGE DELETED]</em>
+                {% else %}
+                  <p class="text-sm font-light tracking-wide">{{ text.content }}</p>
+                {% endif %}
+              </div>
+              
+              <!-- Message Metadata -->
+              <div class="message-meta flex justify-between items-center mt-2">
+                <small class="text-xs {% if text.sender == request.user %}text-pink-200/80{% else %}text-purple-300/80{% endif %} font-mono">
+                  {{ text.timestamp|date:"H:i" }}
+                  {% if text.edited %}<span class="text-gray-400 ml-1">(edited)</span>{% endif %}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="flex items-center justify-center h-full">
+        <div class="text-center text-pink-200/70 animate-fade-in">
+          <div class="relative inline-block">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto mb-4 text-purple-300/50 animate-float" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <div class="absolute -inset-4 rounded-full bg-purple-500/10 blur-md animate-pulse"></div>
+          </div>
+          <h3 class="text-xl font-light tracking-wider bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent">CHANNEL INITIALIZED</h3>
+          <p class="text-sm mt-3 text-gray-400 max-w-md mx-auto">Send your first message to begin the conversation.</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Enhanced Input Form -->
+  <form id="send-message-form" method="POST" action="{% url 'send_message' %}" 
+        class="flex items-center p-4 bg-gray-900/80 backdrop-blur-lg rounded-xl border border-pink-900/30">
+    {% csrf_token %}
+    <input type="hidden" name="chat_id" value="{{ chat.id }}">
+    
+    <div class="relative flex-1">
+      <input type="text" name="content" id="content" 
+             placeholder="Type a message..." 
+             class="w-full rounded-full py-3 px-6 bg-gray-800/80 border border-pink-900/30 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all placeholder-gray-500 font-light tracking-wide pr-12 shadow-lg"
+             autocomplete="off" required>
+      <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-2">
+        <button type="button" class="text-gray-500 hover:text-pink-300 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <button type="submit" 
+            class="ml-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white p-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:ring-offset-2 focus:ring-offset-gray-900 shadow-lg hover:shadow-pink-500/30 flex items-center justify-center relative overflow-hidden group">
+      <span class="relative z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+        </svg>
+      </span>
+      <span class="absolute inset-0 bg-gradient-to-r from-pink-400/30 to-purple-400/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+    </button>
+  </form>
+</div>
+
+<!-- Forward Modal (add this somewhere in your HTML body) -->
+<div id="forwardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-gray-800 rounded-lg p-6 w-96">
+      <h3 class="text-lg font-medium mb-4">Forward Message</h3>
+      <select id="targetChatSelect" class="w-full bg-gray-700 text-white rounded p-2 mb-4">
+          <!-- Options will be populated by JavaScript -->
+      </select>
+      <div class="flex justify-end space-x-2">
+          <button onclick="document.getElementById('forwardModal').classList.add('hidden')" 
+                  class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">
+              Cancel
+          </button>
+          <button onclick="forwardMessage()" 
+                  class="px-4 py-2 bg-green-600 rounded hover:bg-green-500">
+              Forward
+          </button>
+      </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="confirm-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+  <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-pink-900/50 rounded-xl shadow-2xl w-full max-w-md p-6">
+    <h3 class="text-xl font-bold text-pink-300 mb-4 tracking-wider">CONFIRM DELETION</h3>
+    <p class="text-gray-300 mb-6">Sure you want to delete this message?</p>
+    <div class="flex justify-end space-x-3">
+      <button onclick="closeConfirm()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300">
+        CANCEL
+      </button>
+      <button id="confirm-delete-btn" class="px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white rounded-lg transition-all duration-300">
+        CONFIRM
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(236, 72, 153, 0.1);
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(236, 72, 153, 0.4);
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(236, 72, 153, 0.6);
+  }
+  
+  .message {
+    transition: all 0.3s ease;
+  }
+  
+  .my-message {
+    margin-left: auto;
+  }
+  
+  .their-message {
+    margin-right: auto;
+  }
+  
+  /* Action button styles */
+  .delete-btn {
+    box-shadow: 0 0 6px rgba(236, 72, 153, 0.5);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+    transition: all 0.2s ease;
+  }
+  
+  .delete-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.7);
+  }
+  
+  .edit-btn {
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    transition: all 0.2s ease;
+  }
+  
+  .edit-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.7);
+  }
+  
+  .copy-btn {
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    transition: all 0.2s ease;
+  }
+  
+  .copy-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+  }
+#forwardModal {
+    transition: opacity 0.2s ease-in-out;
+}
+
+#forwardModal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+</style>
+
+<script>
+  // DOM Elements
+  const form = document.getElementById('send-message-form');
+  const chatMessages = document.getElementById('chat-messages');
+  const confirmModal = document.getElementById('confirm-modal');
+  let deleteTextId = null;
+  
+  // Auto-scroll to bottom of messages
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  
+  // Initialize scroll position
+  document.addEventListener('DOMContentLoaded', scrollToBottom);
+  
+  // Enhanced message sending with AJAX
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const content = formData.get('content');
+    
+    if (!content.trim()) return;
+    
+    fetch(form.action, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      },
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Create new message element
+        const newMessage = document.createElement('div');
+        newMessage.classList.add('message', 'my-message', 'mb-6', 'group');
+        newMessage.dataset.messageId = data.text_id;
+        newMessage.dataset.senderId = "{{ request.user.id }}";
+        
+        newMessage.innerHTML = `
+          <div class="flex items-end space-x-2 flex-row-reverse">
+            <div class="relative">
+              {% if request.user.profile.profile_pic %}
+                <img src="{{ request.user.profile.profile_pic.url }}" alt="Profile" 
+                     class="h-10 w-10 rounded-full border border-pink-400/50 object-cover">
+              {% else %}
+                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-pink-600 to-purple-600 flex items-center justify-center text-white font-bold">
+                  {{ request.user.username|first|upper }}
+                </div>
+              {% endif %}
+              <div class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-green-400 border-2 border-gray-800"></div>
+            </div>
+            
+            <div class="relative max-w-xs md:max-w-md lg:max-w-lg">
+              <div class="bg-gradient-to-r from-pink-600/90 to-purple-600/90 text-white rounded-2xl p-4 px-5 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                <!-- Copy Button -->
+                <button class="copy-btn absolute -top-2 -right-18 bg-gray-800 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-700 z-10"
+                        onclick="copyMessage(${data.text_id})"
+                        title="Copy message">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  </svg>
+                </button>
+                
+                <!-- Edit Button -->
+                <button class="edit-btn absolute -top-2 -right-10 bg-gray-800 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-700 z-10"
+                        onclick="startEdit(${data.text_id}, '${data.content.replace(/'/g, "\\'")}')">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+                
+                <!-- Delete Button -->
+                <button class="delete-btn absolute -top-2 -right-2 bg-gray-800 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-700 z-10"
+                        onclick="confirmDelete(${data.text_id})">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                
+                <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-400 to-purple-500 opacity-70 transition-opacity duration-300"></div>
+                
+                <div class="message-content relative z-10">
+                  <p class="text-sm font-light tracking-wide">${data.content}</p>
+                </div>
+                
+                <div class="message-meta flex justify-between items-center mt-2">
+                  <small class="text-xs text-pink-200/80 font-mono">${data.timestamp}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Append and scroll
+        chatMessages.appendChild(newMessage);
+        form.reset();
+        scrollToBottom();
+      }
+    });
+  });
+
+// WebSocket connection
+const chatId = {{ chat.id }};
+const socket = new WebSocket(`ws://${window.location.host}/ws/chat/${chatId}/`);
+
+// Connection opened
+socket.addEventListener('open', (event) => {
+    console.log('WebSocket connection established');
+});
+
+// Listen for messages
+socket.addEventListener('message', (event) => {
+    const data = JSON.parse(event.data);
+    console.log('Message received:', data);
+    
+    // Only process if message is from another user
+    if (data.user_id !== "{{ request.user.id }}") {
+        // Create new message element with your actual HTML structure
+        const newMessage = document.createElement('div');
+        newMessage.classList.add('message', 'their-message', 'mb-6', 'group');
+        newMessage.dataset.messageId = 'new-' + Date.now(); // Temporary ID
+        newMessage.dataset.senderId = data.user_id;
+        
+        newMessage.innerHTML = `
+            <div class="flex items-end space-x-2">
+                <div class="relative">
+                    <!-- You'll need to get the sender's profile pic URL properly -->
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-pink-600 to-purple-600 flex items-center justify-center text-white font-bold">
+                        ${data.sender.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-green-400 border-2 border-gray-800"></div>
+                </div>
+                
+                <div class="relative max-w-xs md:max-w-md lg:max-w-lg">
+                    <div class="bg-gray-800/90 text-gray-100 border border-gray-700/50 rounded-2xl p-4 px-5 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-400 to-purple-500 opacity-70 transition-opacity duration-300"></div>
+                        
+                        <div class="message-content relative z-10">
+                            <p class="text-sm font-light tracking-wide">${data.message}</p>
+                        </div>
+                        
+                        <div class="message-meta flex justify-between items-center mt-2">
+                            <small class="text-xs text-purple-300/80 font-mono">${data.timestamp}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('chat-messages').appendChild(newMessage);
+        scrollToBottom();
+    }
+});
+
+// Connection closed
+socket.addEventListener('close', (event) => {
+    console.log('WebSocket connection closed');
+    // Optional: Add reconnection logic here
+});
+
+// Error handling
+socket.addEventListener('error', (error) => {
+    console.error('WebSocket error:', error);
+});
+
+// Function to add message to chat UI
+function addMessageToChat(data, isMyMessage) {
+    const chatMessages = document.getElementById('messages');
+    const messageElement = document.createElement('div');
+    
+    messageElement.classList.add('message', isMyMessage ? 'my-message' : 'other-message');
+    messageElement.innerHTML = `
+        <div class="message-sender">${data.sender}</div>
+        <div class="message-content">${data.message}</div>
+        <div class="message-time">${data.timestamp}</div>
+    `;
+    
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Modify your form submission to use WebSocket
+document.getElementById('chat-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
+    
+    if (message) {
+        // Send via WebSocket
+        socket.send(JSON.stringify({
+            'message': message
+        }));
+        
+        // Add to UI immediately (optimistic update)
+        addMessageToChat({
+            message: message,
+            sender: "{{ request.user.username }}",
+            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            user_id: "{{ request.user.id }}"
+        }, true);
+        
+        messageInput.value = '';
+    }
+});
+  
+  // Message deletion functions
+  function confirmDelete(textId) {
+    deleteTextId = textId;
+    confirmModal.classList.remove('hidden');
+  }
+
+  function closeConfirm() {
+    confirmModal.classList.add('hidden');
+    deleteTextId = null;
+  }
+
+  document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+    if (!deleteTextId) return;
+  
+    fetch(`/chat/text/${deleteTextId}/delete/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        const messageDiv = document.querySelector(`.message[data-message-id="${deleteTextId}"]`);
+        if (messageDiv) {
+          messageDiv.remove();
+        }
+        closeConfirm();
+      } else {
+        alert('Error deleting message.');
+        closeConfirm();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An unexpected error occurred.');
+      closeConfirm();
+    });
+  });
+  
+  // Message editing functions
+  function startEdit(textId, currentContent) {
+    const messageDiv = document.querySelector(`.message[data-message-id="${textId}"]`);
+    const contentDiv = messageDiv.querySelector('.message-content');
+    
+    // Create an input field with the current content
+    contentDiv.innerHTML = `
+      <form class="edit-form" data-message-id="${textId}">
+        <input type="text" value="${currentContent}" 
+               class="w-full bg-transparent border-b border-purple-300/50 focus:outline-none focus:border-purple-300 text-sm font-light tracking-wide">
+        <div class="flex justify-end space-x-2 mt-2">
+          <button type="button" onclick="cancelEdit(${textId}, '${currentContent.replace(/'/g, "\\'")}')" 
+                  class="text-xs text-gray-400 hover:text-gray-200 px-2 py-1 rounded">
+            Cancel
+          </button>
+          <button type="submit" 
+                  class="text-xs bg-purple-600/80 hover:bg-purple-600 text-white px-2 py-1 rounded">
+            Save
+          </button>
+        </div>
+      </form>
+    `;
+    
+    // Focus the input field
+    const input = contentDiv.querySelector('input');
+    input.focus();
+    input.select();
+    
+    // Handle form submission
+    const form = contentDiv.querySelector('.edit-form');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const newContent = input.value.trim();
+      if (newContent && newContent !== currentContent) {
+        saveEdit(textId, newContent);
+      } else {
+        cancelEdit(textId, currentContent);
+      }
+    });
+  }
+
+  function cancelEdit(textId, originalContent) {
+    const messageDiv = document.querySelector(`.message[data-message-id="${textId}"]`);
+    const contentDiv = messageDiv.querySelector('.message-content');
+    contentDiv.innerHTML = `<p class="text-sm font-light tracking-wide">${originalContent}</p>`;
+  }
+
+  function saveEdit(textId, newContent) {
+    fetch(`/chat/text/${textId}/edit/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+      body: `content=${encodeURIComponent(newContent)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const messageDiv = document.querySelector(`.message[data-message-id="${textId}"]`);
+        const contentDiv = messageDiv.querySelector('.message-content');
+        contentDiv.innerHTML = `<p class="text-sm font-light tracking-wide">${data.content}</p>`;
+        
+        // Update timestamp if needed
+        const timestampDiv = messageDiv.querySelector('.message-meta small');
+        if (timestampDiv && data.timestamp) {
+          timestampDiv.textContent = data.timestamp;
+          // Add edited indicator
+          if (!timestampDiv.querySelector('.edited-indicator')) {
+            timestampDiv.innerHTML += '<span class="text-gray-400 ml-1">(edited)</span>';
+          }
+        }
+      } else {
+        alert(data.error || 'Error saving edit');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while saving your edit');
+    });
+  }
+
+  // Copy message to clipboard
+  function copyMessage(textId) {
+    const messageDiv = document.querySelector(`.message[data-message-id="${textId}"]`);
+    const messageContent = messageDiv.querySelector('.message-content p').textContent;
+    
+    navigator.clipboard.writeText(messageContent).then(() => {
+      // Show temporary feedback
+      const copyBtn = messageDiv.querySelector('.copy-btn');
+      const originalHTML = copyBtn.innerHTML;
+      
+      copyBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      `;
+      
+      setTimeout(() => {
+        copyBtn.innerHTML = originalHTML;
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy message: ', err);
+      alert('Failed to copy message to clipboard');
+    });
+  }
+
+  let currentForwardingMessageId = null;
+
+  function openForwardModal(messageId) {
+      currentForwardingMessageId = messageId;
+      const modal = document.getElementById('forwardModal');
+      const select = document.getElementById('targetChatSelect');
+      
+      // Clear previous options
+      select.innerHTML = '';
+      
+      // Fetch available chats (you'll need to implement this endpoint)
+      fetch('/chat/api/chats/available/')
+          .then(response => response.json())
+          .then(chats => {
+              if (chats.length === 0) {
+                  select.innerHTML = '<option value="">No available chats</option>';
+                  return;
+              }
+              
+              chats.forEach(chat => {
+                  const option = document.createElement('option');
+                  option.value = chat.id;
+                  option.textContent = chat.name || `Chat with ${chat.participants.filter(p => p.id !== currentUserId).map(p => p.username).join(', ')}`;
+                  select.appendChild(option);
+              });
+              
+              modal.classList.remove('hidden');
+          })
+          .catch(error => {
+              console.error('Error fetching chats:', error);
+              alert('Failed to load available chats');
+          });
+  }
+  
+  function forwardMessage() {
+      const select = document.getElementById('targetChatSelect');
+      const targetChatId = select.value;
+      
+      if (!targetChatId) {
+          alert('Please select a chat to forward to');
+          return;
+      }
+      
+      fetch(`chat/messages/${currentForwardingMessageId}/forward/${targetChatId}/`, {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': getCookie('csrftoken'),
+              'Content-Type': 'application/json',
+          },
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              document.getElementById('forwardModal').classList.add('hidden');
+              // Optional: Show success message or update UI
+          } else {
+              alert(data.error || 'Failed to forward message');
+          }
+      })
+      .catch(error => {
+          console.error('Error forwarding message:', error);
+          alert('Failed to forward message');
+      });
+  }
+  
+  // Helper function to get CSRF token
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+</script>
+
+{% endblock %}

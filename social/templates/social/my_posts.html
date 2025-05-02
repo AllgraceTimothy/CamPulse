@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto pb-20">
+  <!-- Floating Post Button -->
+  <div class="fixed bottom-6 right-6 z-10">
+    <button onclick="document.getElementById('post-modal').classList.remove('hidden')" 
+            class="bg-accent hover:bg-blue-500 text-white p-4 rounded-full shadow-lg transition-all transform hover:scale-110">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
+  </div>
+
+<!-- Post Modal -->
+<div id="post-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-20 flex items-center justify-center p-4">
+  <div class="bg-secondary rounded-xl shadow-2xl w-full max-w-md p-6 relative">
+    <button onclick="closeModal()" 
+            class="absolute top-4 right-4 text-gray-400 hover:text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <h3 class="text-xl font-bold mb-4 text-white">Create New Post</h3>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4" id="post-form">
+      {% csrf_token %}
+      <textarea name="content" placeholder="What's on your mind?" 
+               class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition min-h-[120px]"></textarea>
+      
+      <!-- Media Preview Container -->
+      <div id="media-preview" class="hidden rounded-lg overflow-hidden bg-gray-800/50 border border-gray-700">
+        <div class="relative">
+          <img id="image-preview" class="w-full max-h-80 object-contain hidden" alt="Image preview">
+          <video id="video-preview" class="w-full max-h-80 hidden" controls></video>
+          <button type="button" onclick="removeMedia()" class="absolute top-2 right-2 bg-black/70 rounded-full p-1 hover:bg-black">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="flex items-center justify-between">
+        <div class="flex space-x-3">
+          <label class="cursor-pointer text-gray-400 hover:text-accent transition">
+            <input type="file" name="image" id="image-input" accept="image/*" class="hidden" onchange="previewMedia(this, 'image')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </label>
+          <label class="cursor-pointer text-gray-400 hover:text-accent transition">
+            <input type="file" name="video" id="video-input" accept="video/*" class="hidden" onchange="previewMedia(this, 'video')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </label>
+        </div>
+        <button type="submit" class="bg-accent hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all">
+          Post
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- Page Header -->
+  <div class="sticky top-0 z-10 bg-primary py-4 px-2 backdrop-blur-sm bg-opacity-90 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-white">My Posts</h2>
+        <p class="text-gray-400 text-sm">Your personal campus journal</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts List -->
+  <div class="space-y-6">
+    {% for post in my_posts %}
+    <div class="bg-secondary rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl">
+      <!-- Post Header with Actions -->
+      <div class="flex justify-between items-center p-4 border-b border-gray-800">
+        <div class="text-sm text-gray-400">{{ post.created_at|naturaltime }}</div>
+        <div class="flex space-x-2">
+          {% if user == post.author %}
+          <div class="flex space-x-4">
+            <!-- Edit button -->
+            <a href="{% url 'post_edit' post.pk %}" class="text-gray-400 hover:text-accent transition" title="Edit Post">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </a>
+            <!-- Delete button -->
+            <a href="{% url 'post_delete' post.pk %}" class="text-gray-400 hover:text-red-400 transition" title="Delete Post">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </a>
+          </div>
+        {% endif %}
+        
+        </div>
+      </div>
+
+      <!-- Post Content -->
+      <div class="p-4">
+        <p class="text-white">{{ post.content }}</p>
+      </div>
+
+      <!-- Media -->
+      {% if post.image %}
+      <div class="border-t border-gray-800">
+        <img src="{{ post.image.url }}" class="w-full max-h-96 object-cover" alt="Post image">
+      </div>
+      {% endif %}
+
+      {% if post.video %}
+      <div class="border-t border-gray-800">
+        <video controls class="w-full max-h-96">
+          <source src="{{ post.video.url }}" type="video/mp4">
+          Your browser doesn't support HTML5 video.
+        </video>
+      </div>
+      {% endif %}
+
+      <!-- Post Stats -->
+      <div class="px-4 py-3 border-t border-gray-800 flex space-x-4 text-sm text-gray-400">
+        <span>{{ post.total_likes }} Like{{ post.total_likes|pluralize }}</span>
+        <span>{{ post.total_comments }} Comment{{ post.total_comments|pluralize }}</span>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-12">
+      <div class="text-gray-400 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl text-white font-medium mb-2">No posts yet</h3>
+      <p class="text-gray-400">Share your thoughts with the campus community</p>
+      <button onclick="document.getElementById('post-modal').classList.remove('hidden')" 
+              class="mt-4 bg-accent hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all">
+        Create Your First Post
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  // Animation for posts when they load
+  document.addEventListener('DOMContentLoaded', function() {
+    const posts = document.querySelectorAll('.bg-secondary');
+    posts.forEach((post, index) => {
+      setTimeout(() => {
+        post.style.opacity = '1';
+        post.style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+  });
+
+  function previewMedia(input, mediaType) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const previewContainer = document.getElementById('media-preview');
+    const imagePreview = document.getElementById('image-preview');
+    const videoPreview = document.getElementById('video-preview');
+    
+    // Hide all previews first
+    imagePreview.classList.add('hidden');
+    videoPreview.classList.add('hidden');
+    
+    // Clear previous selection from other input
+    if (mediaType === 'image') {
+      document.getElementById('video-input').value = '';
+    } else {
+      document.getElementById('image-input').value = '';
+    }
+    
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      previewContainer.classList.remove('hidden');
+      
+      if (mediaType === 'image') {
+        imagePreview.src = e.target.result;
+        imagePreview.classList.remove('hidden');
+      } else {
+        videoPreview.src = URL.createObjectURL(file);
+        videoPreview.classList.remove('hidden');
+      }
+    }
+    
+    if (mediaType === 'image') {
+      reader.readAsDataURL(file);
+    } else {
+      // For video, we use URL.createObjectURL directly
+      previewContainer.classList.remove('hidden');
+      videoPreview.src = URL.createObjectURL(file);
+      videoPreview.classList.remove('hidden');
+    }
+  }
+  
+  function removeMedia() {
+    const previewContainer = document.getElementById('media-preview');
+    const imagePreview = document.getElementById('image-preview');
+    const videoPreview = document.getElementById('video-preview');
+    
+    previewContainer.classList.add('hidden');
+    imagePreview.classList.add('hidden');
+    videoPreview.classList.add('hidden');
+    imagePreview.src = '';
+    videoPreview.src = '';
+    
+    // Clear file inputs
+    document.getElementById('image-input').value = '';
+    document.getElementById('video-input').value = '';
+  }
+  
+  function closeModal() {
+    document.getElementById('post-modal').classList.add('hidden');
+    removeMedia(); // Clear any previews when closing modal
+  }
+</script>
+
+<style>
+  .bg-secondary {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+</style>
+{% endblock %}

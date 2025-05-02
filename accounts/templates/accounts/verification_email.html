@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Your Email - CamPulse</title>
+    <style>
+        body {
+            font-family: 'Orbitron', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            margin: 0;
+            padding: 0;
+            color: #f8fafc;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1e293b;
+            padding: 40px 0 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .header h1 {
+            color: #3b82f6;
+            margin: 15px 0 0;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .content {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .logo {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        .button {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white !important;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 25px 0;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            font-size: 14px;
+            padding: 20px 0;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            margin: 25px 0;
+            border: none;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: #94a3b8;
+        }
+        h2 {
+            color: #e2e8f0;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        p {
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .verification-link {
+            word-break: break-all;
+            font-size: 14px;
+            color: #3b82f6;
+            background-color: #0f172a;
+            padding: 12px;
+            border-radius: 6px;
+            display: inline-block;
+            max-width: 100%;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .emoji {
+            font-size: 24px;
+            vertical-align: middle;
+        }
+        .expiry-note {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color:rgb(245, 38, 48);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- CamPulse Logo -->
+            <img src="http://127.0.0.1:8000/static/favicon.png" alt="CamPulse Logo" class="logo">
+            <h1>CamPulse</h1>
+        </div>
+        
+        <div class="content">
+            <div class="text-center">
+                <h2>Welcome to Campulse <span class="emoji">🎉</span></h2>
+                <p>We're excited to have you join our community. Just one more step to complete your registration.</p>
+                
+                <p>Please verify your email address to activate your account:</p>
+                
+                <a href="{{ verification_link }}" class="button">Verify Email Address</a>
+                
+                <div class="divider"></div>
+                
+                <p class="text-muted">If you're having trouble clicking the button, copy and paste this link into your browser:</p>
+                <p class="verification-link">{{ verification_link }}</p>
+                
+                <div class="expiry-note">
+                    <strong>Note:</strong> This verification link will expire in 24 hours.
+                </div>
+                
+                <p class="text-muted">If you didn't create an account with Campulse, please ignore this email.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; {% now "Y" %} CamPulse | All rights reserved | &copy; AllgraceTimothy</p>
+            <p>Connect with fellow students and make the most of your campus life.</p>
+        </div>
+    </div>
+</body>
+</html>

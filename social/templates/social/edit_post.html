@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto pb-20">
+  <!-- Page Header -->
+  <div class="sticky top-0 z-10 bg-primary py-4 px-2 backdrop-blur-sm bg-opacity-90 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-white">Edit Post</h2>
+        <p class="text-gray-400 text-sm">Make changes to your content</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Form Card -->
+  <div class="bg-secondary rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl">
+    <form method="POST" enctype="multipart/form-data" class="space-y-4 p-6">
+      {% csrf_token %}
+      
+      <!-- Content Field -->
+      <div class="space-y-2">
+        <label for="{{ form.content.id_for_label }}" class="block text-sm font-medium text-gray-300">Content</label>
+        <textarea name="content" id="{{ form.content.id_for_label }}" 
+                 class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition min-h-[80px]"
+                 placeholder="What's on your mind?">{{ form.content.value|default:'' }}</textarea>
+      </div>
+      
+      <!-- Media Preview with Removal Warning -->
+      {% if form.instance.image or form.instance.video %}
+      <div class="relative border border-gray-700 rounded-lg overflow-hidden bg-gray-800/50 group">
+        <div class="relative">
+          {% if form.instance.image %}
+            <img src="{{ form.instance.image.url }}" class="w-full max-h-80 object-contain" alt="Current image">
+            <div id="current-media-overlay" class="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span class="text-white font-bold text-lg">This Image Will Be Removed</span>
+            </div>
+          {% elif form.instance.video %}
+            <video controls class="w-full max-h-80">
+              <source src="{{ form.instance.video.url }}" type="video/mp4">
+              Your browser doesn't support HTML5 video.
+            </video>
+            <div id="current-media-overlay" class="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span class="text-white font-bold text-lg">This Video Will Be Removed</span>
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+      <input type="hidden" name="clear_media" id="clear-media" value="false">
+      {% endif %}
+      
+      <!-- Media Upload -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-300">Update Media</label>
+        <div class="flex items-center space-x-4">
+          <label class="cursor-pointer flex items-center space-x-2 text-gray-400 hover:text-accent transition">
+            <input type="file" name="image" id="image-input" accept="image/*" class="hidden" onchange="previewMedia(this, 'image')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Image</span>
+          </label>
+          
+          <label class="cursor-pointer flex items-center space-x-2 text-gray-400 hover:text-accent transition">
+            <input type="file" name="video" id="video-input" accept="video/*" class="hidden" onchange="previewMedia(this, 'video')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <span>Video</span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- New Media Preview -->
+      <div id="media-preview" class="hidden rounded-lg overflow-hidden bg-gray-800/50 border border-gray-700 group">
+        <div class="relative">
+          <img id="image-preview" class="w-full max-h-80 object-contain hidden" alt="Image preview">
+          <video id="video-preview" class="w-full max-h-80 hidden" controls></video>
+          <div id="new-media-overlay" class="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span class="text-white font-bold text-lg">This Will Replace Current Media</span>
+          </div>
+
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-800">
+        <a href="{% url 'my_posts' %}" class="px-4 py-2 rounded-lg font-medium transition-all border border-gray-700 text-gray-300 hover:bg-gray-800">
+          Cancel
+        </a>
+        <button type="submit" class="bg-accent hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function previewMedia(input, mediaType) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const previewContainer = document.getElementById('media-preview');
+    const imagePreview = document.getElementById('image-preview');
+    const videoPreview = document.getElementById('video-preview');
+    
+    // Hide all previews first
+    imagePreview.classList.add('hidden');
+    videoPreview.classList.add('hidden');
+    
+    // Clear previous selection from other input
+    if (mediaType === 'image') {
+      document.getElementById('video-input').value = '';
+    } else {
+      document.getElementById('image-input').value = '';
+    }
+    
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      previewContainer.classList.remove('hidden');
+      
+      if (mediaType === 'image') {
+        imagePreview.src = e.target.result;
+        imagePreview.classList.remove('hidden');
+      } else {
+        videoPreview.src = URL.createObjectURL(file);
+        videoPreview.classList.remove('hidden');
+      }
+    }
+    
+    if (mediaType === 'image') {
+      reader.readAsDataURL(file);
+    } else {
+      // For video, we use URL.createObjectURL directly
+      previewContainer.classList.remove('hidden');
+      videoPreview.src = URL.createObjectURL(file);
+      videoPreview.classList.remove('hidden');
+    }
+  }
+  
+  function removeMedia() {
+    const previewContainer = document.getElementById('media-preview');
+    const imagePreview = document.getElementById('image-preview');
+    const videoPreview = document.getElementById('video-preview');
+    
+    previewContainer.classList.add('hidden');
+    imagePreview.classList.add('hidden');
+    videoPreview.classList.add('hidden');
+    imagePreview.src = '';
+    videoPreview.src = '';
+    
+    // Clear file inputs
+    document.getElementById('image-input').value = '';
+    document.getElementById('video-input').value = '';
+  }
+</script>
+
+<style>
+  .bg-secondary {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  textarea {
+    resize: none;
+  }
+  
+  /* Animation when page loads */
+  @media (prefers-reduced-motion: no-preference) {
+    .bg-secondary {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Custom scrollbar for textarea */
+  textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  textarea::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+  
+  textarea::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  
+  textarea::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+</style>
+{% endblock %}

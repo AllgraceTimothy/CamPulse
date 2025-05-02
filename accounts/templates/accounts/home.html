@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+<!-- Hero Section for Unauthenticated Users -->
+<section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-gray-900 px-4 py-20 relative overflow-hidden">
+  <!-- Animated background elements -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-accent blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full bg-purple-500 blur-3xl animate-pulse delay-300"></div>
+  </div>
+  
+  <div class="text-center max-w-4xl relative z-10">
+    <div class="animate-fadeIn">
+      <span class="text-4xl md:text-6xl font-extrabold text-white mb-4 block">Hii there 👋🏽</span>
+      <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">
+        Welcome to <span class="text-accent">CamPulse</span>
+      </h1>
+      <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Your digital space to connect, share, and thrive with fellow students. Dive into campus events, chat with classmates, and post what matters to you.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+        <a href="{% url 'register' %}" class="bg-accent hover:bg-blue-500 text-white px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Get Started
+        </a>
+        <a href="{% url 'login' %}" class="text-white border-2 border-accent hover:bg-accent px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Log In
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 px-4 bg-gray-900 relative overflow-hidden">
+  <!-- Background pattern -->
+  <div class="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC41IiBzdHJva2Utb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMCAwaDQwdDQwdjQwSDB6Ii8+PC9zdmc+')]"></div>
+  
+  <div class="max-w-7xl mx-auto relative z-10">
+    <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-16">Why Join CamPulse ?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-secondary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
+        <div class="text-accent text-4xl mb-4">🎓</div>
+        <h3 class="text-2xl font-semibold text-white mb-3">Student-Only Space</h3>
+        <p class="text-gray-300">Accounts are verified with student emails. It's your campus, online.</p>
+      </div>
+      <div class="bg-secondary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
+        <div class="text-accent text-4xl mb-4">💬</div>
+        <h3 class="text-2xl font-semibold text-white mb-3">Chat & Discussions</h3>
+        <p class="text-gray-300">Join open topics, chat with peers, or slide into DMs responsibly.</p>
+      </div>
+      <div class="bg-secondary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
+        <div class="text-accent text-4xl mb-4">📅</div>
+        <h3 class="text-2xl font-semibold text-white mb-3">Campus Events</h3>
+        <p class="text-gray-300">Never miss out — view or post about club meetups, parties, and more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% else %}
+
+<!-- Authenticated User Feed -->
+<section class="py-16 px-4">
+    <!-- Feed Header -->
+    <div class="sticky top-0 z-10 bg-primary/90 backdrop-blur-sm py-4 px-2 mb-6 rounded-lg">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Campus Feed</h2>
+          <p class="text-gray-400 text-sm">See what's buzzing in Kenyan Campuses</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Posts -->
+    <div class="space-y-6 mt-4">
+      {% for post in posts %}
+      <div class="bg-secondary rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl animate-slideUp border border-gray-800/50 max-w-3xl mx-auto">
+        <!-- Post Header -->
+        <div class="flex items-center justify-between p-6">
+          <div class="flex items-center">
+            <div class="h-12 w-12 rounded-full bg-gray-700 overflow-hidden mr-4">
+              {% if post.author.profile.profile_pic %}
+                <img src="{{ post.author.profile.profile_pic.url }}" class="h-full w-full object-cover">
+              {% else %}
+                <div class="h-full w-full flex items-center justify-center text-white text-xl">
+                  {{ post.author.username|first|upper }}
+                </div>
+              {% endif %}
+            </div>
+            <div>
+              <h4 class="font-medium text-white">{{ post.author.username }}</h4>
+              <p class="text-xs text-gray-400">{{ post.created_at|naturaltime }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Post Content -->
+        <div class="px-6 pb-4">
+          <p class="text-white">{{ post.content }}</p>
+        </div>
+        
+        <!-- Media -->
+        {% if post.image %}
+        <div class="border-t border-gray-800">
+          <img src="{{ post.image.url }}" class="w-full max-h-96 object-cover" alt="Post image">
+        </div>
+        {% endif %}
+        
+        {% if post.video %}
+        <div class="border-t border-gray-800">
+          <video controls class="w-full max-h-96">
+            <source src="{{ post.video.url }}" type="video/mp4">
+            Your browser doesn't support HTML5 video.
+          </video>
+        </div>
+        {% endif %}
+        
+        <!-- Post Stats -->
+        <div class="px-6 py-3 border-t border-gray-800 flex items-center text-sm text-gray-400">
+          <span class="mr-4">💚{{ post.total_likes }}</span>
+          <span>{{ post.comments.count }} comments</span>
+        </div>
+        
+        <!-- Post Actions -->
+        <div class="px-6 py-3 border-t border-gray-800 flex justify-between">
+          <form method="POST" action="{% url 'like_post' post.id %}" class="flex-1">
+            {% csrf_token %}
+            <button type="submit" class="w-full flex items-center justify-center space-x-2 text-gray-400 hover:text-accent transition py-2 rounded-lg hover:bg-gray-800/50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span>Like</span>
+            </button>
+          </form>
+          <button onclick="openCommentsModal('{{ post.id }}')" class="flex-1 flex items-center justify-center space-x-2 text-gray-400 hover:text-accent transition py-2 rounded-lg hover:bg-gray-800/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0 4.418 4.03 8 9 8s9 3.582 9 8z" />
+            </svg>
+            <span>Comment</span>
+          </button>
+          <button class="flex-1 flex items-center justify-center space-x-2 text-gray-400 hover:text-accent transition py-2 rounded-lg hover:bg-gray-800/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            <span>Share</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Comments Modal for this post -->
+      <div id="comments-modal-{{ post.id }}" class="hidden fixed inset-0 bg-black bg-opacity-70 z-30 flex items-center justify-center p-4">
+        <div class="bg-secondary rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col relative">
+          <div class="p-4 border-b border-gray-800 sticky top-0 bg-secondary rounded-t-2xl">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-bold text-white">Comments</h3>
+              <button onclick="closeCommentsModal('{{ post.id }}')" class="text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Comments Section -->
+          <div class="p-4 overflow-y-auto flex-1">
+            <div class="space-y-4">
+              {% for comment in post.comments.all %}
+              <div class="flex items-start">
+                <div class="h-8 w-8 rounded-full bg-gray-700 overflow-hidden mr-3 flex-shrink-0">
+                  {% if comment.user.profile.profile_pic %}
+                    <img src="{{ comment.user.profile.profile_pic.url }}" class="h-full w-full object-cover">
+                  {% else %}
+                    <div class="h-full w-full flex items-center justify-center text-white text-sm">
+                      {{ comment.user.username|first|upper }}
+                    </div>
+                  {% endif %}
+                </div>
+                <div>
+                  <div class="bg-gray-800 rounded-lg p-3">
+                    <p class="font-medium text-white text-sm">{{ comment.user.username }}</p>
+                    <p class="text-gray-300 text-sm">{{ comment.content }}</p>
+                  </div>
+                  <p class="text-gray-500 text-xs mt-1">{{ comment.created_at|naturaltime }}</p>
+                </div>
+              </div>
+              {% empty %}
+              <div class="text-center py-8">
+                <p class="text-gray-400">No comments yet. Be the first to comment!</p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <!-- Add Comment Form -->
+          <div class="p-4 border-t border-gray-800 sticky bottom-0 bg-secondary rounded-b-2xl">
+            <form method="POST" action="{% url 'add_comment' post.id %}" class="flex items-center">
+              {% csrf_token %}
+              <input type="text" name="comment" placeholder="Write a comment..." 
+                     class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-accent focus:border-transparent text-sm">
+              <button type="submit" class="ml-2 text-accent hover:text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-center py-16">
+        <div class="text-gray-400 mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-2xl text-white font-medium mb-3">No posts yet</h3>
+        <p class="text-gray-400 mb-6">Be the first to share something with your campus!</p>
+        <a href="{% url 'my_posts' %}" class="bg-accent hover:bg-blue-500 text-white px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Create First Post
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  function openCommentsModal(postId) {
+    document.getElementById(`comments-modal-${postId}`).classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+  }
+  
+  function closeCommentsModal(postId) {
+    document.getElementById(`comments-modal-${postId}`).classList.add('hidden');
+    document.body.style.overflow = ''; // Re-enable scrolling
+  }
+</script>
+
+{% endif %}
+
+<style>
+  /* Animations */
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-out;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.6s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Custom scrollbar for comments */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 2px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+  }
+</style>
+{% endblock %}
