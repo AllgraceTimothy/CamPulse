@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from django.contrib.auth.models import User
+from django.conf import settings
 
 from .models import Chat, Message, MessageVisibility, HiddenChat
 from accounts.models import Profile
@@ -29,6 +29,8 @@ def inbox(request):
 
     results = []
     if search_query:
+        # Import your custom User model directly
+        from accounts.models import User
         results = User.objects.filter(username__icontains=search_query).exclude(id=user.id)
 
     return render(request, 'chat/inbox.html', {
@@ -94,6 +96,7 @@ def send_message(request):
 @require_POST
 def start_chat(request):
     other_user_id = request.POST.get('user_id')
+    from accounts.models import User
     other_user = get_object_or_404(User, id=other_user_id)
 
     existing_chat = Chat.objects.filter(participants=request.user).filter(participants=other_user).first()
@@ -104,7 +107,6 @@ def start_chat(request):
     chat.participants.add(request.user, other_user)
 
     return redirect('direct_msg', chat_id=chat.id)
-
 
 @login_required
 @require_POST
