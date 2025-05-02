@@ -80,10 +80,6 @@
       <!-- Site Name -->
     </div>
     <nav class="flex items-center space-x-4">
-      <a href="{% url 'home' %}" class="nav-icon" title="Home">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
       {% if user.is_authenticated %}
       <a href="{% url 'my_posts' %}" class="nav-icon" title="My Posts">
         <i class="fas fa-newspaper"></i>
@@ -106,6 +102,10 @@
       </form>
       
       {% else %}
+      <a href="{% url 'home' %}" class="nav-icon" title="Home">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
       <a href="{% url 'login' %}" class="nav-icon" title="Login">
         <i class="fas fa-sign-in-alt"></i>
         <span>Login</span>
