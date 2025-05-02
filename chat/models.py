@@ -2,7 +2,10 @@ from django.conf import settings
 from django.db import models
 
 class Chat(models.Model):
-  participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='chats')
+  participants = models.ManyToManyField(
+        getattr(settings, 'AUTH_USER_MODEL', 'accounts.User'),
+        related_name='chats'
+    )
   created_at = models.DateTimeField(auto_now_add=True)
   deleted_for = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='deleted_chats', blank=True)
 
