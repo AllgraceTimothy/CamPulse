@@ -118,7 +118,10 @@ CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = True 
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_TRUSTED_ORIGINS = ast.literal_eval(os.getenv("CSRF_TRUSTED_ORIGINS", "[]"))
+CSRF_TRUSTED_ORIGINS = [
+    'https://campulse.up.railway.app',
+    'http://127.0.0.1',
+]
 
 ROOT_URLCONF = 'jkuatconnect.urls'
 
