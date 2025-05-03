@@ -3,6 +3,7 @@ from .models import Post, Like, Comment
 from .forms import PostForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 @login_required
 def my_posts_view(request):
@@ -69,3 +70,14 @@ def add_comment(request, post_id):
     if content:
       Comment.objects.create(user=request.user, post=post, content=content)
   return redirect('home')
+
+def delete_comment(request, comment_id):
+   comment = get_object_or_404(Comment, id=comment_id)
+
+   if not comment.can_delete(request.user):
+      raise PermissionDenied("You are not authorized to delete this comment")
+   
+   post_id = comment.post.id
+   comment.delete()
+
+   return redirect('home')

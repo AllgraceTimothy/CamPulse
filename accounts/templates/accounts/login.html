@@ -2,6 +2,33 @@
 {% load static %}
 {% block content %}
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-gray-900 px-4 py-12">
+  <!-- OAuth Success Popup -->
+  {% if oauth_success %}
+  <div id="oauth-success-popup" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+    <div class="bg-gray-800 rounded-2xl shadow-xl p-6 max-w-md w-full mx-4 border border-accent/30">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-accent flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          🎉Registration Successful🎉
+        </h3>
+      </div>
+      <p class="text-gray-300 mb-6">
+        Your account has been created successfully via Google.<br><br>
+        ✅ We've sent a temporary password to your email address.<br>
+        ✅ Please check your inbox to complete the setup.
+      </p>
+      <button onclick="closePopup()" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-blue-600 transition font-medium flex items-center justify-center">
+        Continue to Login
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="w-full max-w-md">
     <!-- Logo/Branding -->
     <div class="text-center mb-8">
@@ -15,7 +42,6 @@
       <p class="text-gray-300">Welcome back! Please sign in to continue</p>
     </div>
 
-    <!-- Rest of your existing login card remains exactly the same -->
     <!-- Login Card -->
     <div class="bg-secondary rounded-2xl shadow-xl overflow-hidden transition-all transform hover:shadow-2xl">
       <div class="p-8">
@@ -157,5 +183,17 @@
       `;
     }
   }
+
+  function closePopup() {
+    document.getElementById('oauth-success-popup').style.display = 'none';
+  }
+
+  // Auto-close popup after 5 seconds
+  window.onload = function() {
+    const popup = document.getElementById('oauth-success-popup');
+    if (popup) {
+      setTimeout(closePopup, 20000);
+    }
+  };
 </script>
 {% endblock %}

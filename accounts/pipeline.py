@@ -1,6 +1,7 @@
 import re
 from social_core.pipeline.user import get_username
 from django.core.exceptions import ValidationError
+from social_core.exceptions import AuthForbidden
 from .models import Profile
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
@@ -11,10 +12,17 @@ from social_core.pipeline.user import get_username
 def validate_student_email(strategy, details, backend, user=None, *args, **kwargs):
     email = details.get('email')
     pattern = r'^[a-zA-Z0-9_.+-]+\@students.[a-zA-Z]+\.ac\.ke$'
-        
+    
     if not email or not re.fullmatch(pattern, email):
-        raise ValidationError('You must sign up with a valid Kenyan student email in the format: [yourname]@students.[school].ac.ke')
-    return None
+        request = strategy.request if hasattr(strategy, 'request') else None
+        if request:
+            messages.error(
+                request,
+                'You must sign up with a valid Kenyan student email in the format: [yourname]@students.[school].ac.ke'
+            )
+            request.session.save()
+            return redirect('register')
+        raise AuthForbidden(backend, 'Invalid student email format')
 
 def send_verification_email(strategy, details, backend, user=None, *args, **kwargs):
     if user and not user.is_verified and backend.name != 'google-oauth2':
@@ -52,21 +60,12 @@ def set_temporary_password(strategy, details, backend, user=None, *args, **kwarg
         user.password_changed = False 
         user.save()
         
-        send_temp_password_email(user, temp_password)
+        # Store whether email was sent successfully
+        email_sent = send_temp_password_email(user, temp_password)
+        strategy.session_set('temp_email_sent', email_sent)
         
         strategy.session_set('force_password_set', True)
         strategy.session_set('is_temp_password', True)
-    return None
-
-def social_registration_success_message(strategy, backend, user, response, is_new=False, *args, **kwargs):
-    if is_new and backend.name == 'google-oauth2':
-        request = strategy.request if hasattr(strategy, 'request') else None
-        if request:
-            messages.success(
-                request,
-                'Your account has been created successfuly.\nYou will receive an email with temporary login credentials.\nUse them to login and set your password.'
-            )
-            request.session.save()
     return None
 
 def check_temp_password_on_login(strategy, user, response, *args, **kwargs):
@@ -81,5 +80,6 @@ def check_temp_password_on_login(strategy, user, response, *args, **kwargs):
 def redirect_to_password_set(strategy, backend, user, response, *args, **kwargs):
     """Redirect to password set page if needed."""
     if strategy.session_get('force_password_set'):
-        return redirect('set_password')
+        if not strategy.session_get('oauth_success'):
+            return redirect('set_password')
     return None

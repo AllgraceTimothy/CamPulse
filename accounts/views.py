@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from .forms import UserRegisterForm, ProfileForm, UsernameChangeForm
 from django.contrib.auth.decorators import login_required
@@ -22,7 +23,6 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
-from .pipeline import social_registration_success_message
 
 def home_view(request):
   posts = Post.objects.all().order_by('-created_at')
@@ -77,10 +77,16 @@ def auth_complete(request, backend):
         
         if user:
             login(request, user, backend='social_core.backends.google.GoogleOAuth2')
-            # Check if they need to set a password (new social auth user)
+            
             if request.session.get('force_password_set'):
                 return redirect('set_password')
-            return redirect('dashboard')
+            
+            if request.session.get('temp_email_sent'):
+                request.session['oauth_success'] = True
+                request.session.pop('temp_email_sent', None)
+                request.session.modified = True
+            return redirect('login')
+            
     except Exception as e:
         messages.error(request, f"Authentication error: {str(e)}")
     return redirect('login')
@@ -88,6 +94,14 @@ def auth_complete(request, backend):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
+    
+    oauth_success = request.session.pop('oauth_success', False)
+    
+    if not oauth_success and request.session.get('temp_email_sent'):
+        oauth_success = True
+        request.session.pop('temp_email_sent', None)
+    
+    print(f"Login View - Final oauth_success: {oauth_success}")  # Debug
         
     if request.method == 'POST':
         username = request.POST['username']
@@ -111,7 +125,7 @@ def login_view(request):
                 messages.error(request, 'Your account is not verified. Please check your email.')
         else:
             messages.error(request, 'Invalid email or password.')
-    return render(request, 'accounts/login.html')
+    return render(request, 'accounts/login.html', {'oauth_success': oauth_success})
 
 @login_required
 def set_password_view(request):
