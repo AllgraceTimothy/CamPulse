@@ -11,15 +11,42 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          🎉Registration Successful🎉
+          🎉 Registration Successful 🎉
         </h3>
       </div>
       <p class="text-gray-300 mb-6">
         Your account has been created successfully via Google.<br><br>
-        ✅ We've sent a temporary password to your email address.<br>
-        ✅ Please check your inbox to complete the setup.
+        ✅ We've sent a temporary username and password to your email address.<br>
+        ✅ Use them to login and finish up your registration by setting your own Password.
       </p>
-      <button onclick="closePopup()" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-blue-600 transition font-medium flex items-center justify-center">
+      <button onclick="closeOAuthPopup()" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-blue-600 transition font-medium flex items-center justify-center">
+        Continue to Login
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Registration Success Popup -->
+  {% if form_reg_success %}
+  <div id="registration-success-popup" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+    <div class="bg-gray-800 rounded-2xl shadow-xl p-6 max-w-md w-full mx-4 border border-accent/30">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-accent flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          🎉 Registration Successful 🎉
+        </h3>
+      </div>
+      <p class="text-gray-300 mb-6">
+        Your account has been created successfully!<br><br>
+        ✅ We've sent a verification email to your registered address.<br>
+        ✅ Please check your inbox and click the link to verify your account then proceed to login.
+      </p>
+      <button onclick="closeRegistrationPopup()" class="w-full bg-accent text-white py-3 rounded-lg hover:bg-blue-600 transition font-medium flex items-center justify-center">
         Continue to Login
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -184,15 +211,24 @@
     }
   }
 
-  function closePopup() {
+  function closeOAuthPopup() {
     document.getElementById('oauth-success-popup').style.display = 'none';
   }
 
-  // Auto-close popup after 5 seconds
+  function closeRegistrationPopup() {
+    document.getElementById('registration-success-popup').style.display = 'none';
+  }
+
+  // Auto-close popups after 30 seconds
   window.onload = function() {
-    const popup = document.getElementById('oauth-success-popup');
-    if (popup) {
-      setTimeout(closePopup, 20000);
+    const oauthPopup = document.getElementById('oauth-success-popup');
+    const regPopup = document.getElementById('registration-success-popup');
+    
+    if (oauthPopup) {
+      setTimeout(closeOAuthPopup, 30000);
+    }
+    if (regPopup) {
+      setTimeout(closeRegistrationPopup, 30000);
     }
   };
 </script>

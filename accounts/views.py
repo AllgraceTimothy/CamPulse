@@ -42,7 +42,7 @@ def register_view(request):
             # Send verification email
             send_verification_email(user)
             
-            messages.success(request, 'Registration successful! Please check your email to verify your account.')
+            request.session['form_reg_success'] = True
             return redirect('login')
 
     else:
@@ -96,12 +96,11 @@ def login_view(request):
         return redirect('dashboard')
     
     oauth_success = request.session.pop('oauth_success', False)
+    form_reg_success = request.session.pop('form_reg_success', False)
     
     if not oauth_success and request.session.get('temp_email_sent'):
         oauth_success = True
         request.session.pop('temp_email_sent', None)
-    
-    print(f"Login View - Final oauth_success: {oauth_success}")  # Debug
         
     if request.method == 'POST':
         username = request.POST['username']
@@ -125,7 +124,10 @@ def login_view(request):
                 messages.error(request, 'Your account is not verified. Please check your email.')
         else:
             messages.error(request, 'Invalid email or password.')
-    return render(request, 'accounts/login.html', {'oauth_success': oauth_success})
+    return render(request, 'accounts/login.html', {
+        'oauth_success': oauth_success,
+        'form_reg_success': form_reg_success
+        })
 
 @login_required
 def set_password_view(request):
