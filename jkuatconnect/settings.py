@@ -84,7 +84,6 @@ SOCIAL_AUTH_PIPELINE = (
     'accounts.pipeline.force_password_set',
     'accounts.pipeline.redirect_to_password_set',
     'social_core.pipeline.user.user_details',
-    'accounts.pipeline.require_password_set',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
