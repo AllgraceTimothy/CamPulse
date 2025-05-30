@@ -8,7 +8,7 @@ urlpatterns = [
     path('set-password/', views.set_password_view, name='set_password'),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('logout/', CustomLogoutView.as_view(next_page='home'), name='logout'),
+    path('logout/', CustomLogoutView.as_view(next_page='login'), name='logout'),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('verify-email/<uuid:token>/', views.verify_email_view, name='verify-email'),
     path('change-username/', views.change_username, name='change_username'),
