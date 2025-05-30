@@ -119,7 +119,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = True 
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = [
-    'https://campulse.onrender.com',
+    'https://campulse-fhfl.onrender.com',
     'http://127.0.0.1',
 ]
 
