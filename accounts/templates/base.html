@@ -7,153 +7,534 @@
   <title>CamPulse</title>
   <link rel="icon" href="{% static 'favicon.png' %}" sizes="32x32">
   <link rel="shortcut icon" href="{% static 'favicon.png' %}">
-  <!-- Tailwind CSS is already linked here -->
-   <!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          primary: '#0f172a',   // background
-          secondary: '#1e293b', // cards and nav
-          accent: '#3b82f6',    // buttons/links
-        },
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f172a',
+            secondary: '#1e293b',
+            accent: '#8b5cf6', // Purple accent
+            emerald: {
+              light: '#6ee7b7',
+              DEFAULT: '#10b981', // Vibrant emerald green
+              dark: '#059669'
+            },
+            purple: {
+              light: '#a78bfa',
+              DEFAULT: '#8b5cf6',
+              dark: '#7c3aed'
+            }
+          },
+          backgroundImage: {
+            'gradient-purple-green': 'linear-gradient(135deg, #8b5cf6 0%, #10b981 100%)',
+            'gradient-header': 'linear-gradient(135deg, #7c3aed 0%, #0f172a 100%)',
+            'gradient-footer': 'linear-gradient(135deg, #0f172a 0%, #059669 100%)'
+          }
+        }
       }
     }
-  }
-</script>
+  </script>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<style>
-  body { font-family: 'Orbitron', sans-serif; }
-  
-  .nav-icon {
-    transition: all 0.3s ease;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-  }
-  
-  .nav-icon i {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
-  }
-  
-  .nav-icon span {
-    font-size: 0.75rem;
-  }
-  
-  .nav-icon:hover {
-    color: #3b82f6;
-    transform: translateY(-3px);
-    text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
-  }
-  
-  .nav-icon:hover i {
-    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7));
-  }
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { 
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+    }
+    
+    .nav-icon {
+      transition: all 0.3s ease;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    
+    .nav-icon i {
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .nav-icon span {
+      font-size: 0.75rem;
+    }
+    
+    .nav-icon:hover {
+      color: #6ee7b7; /* Changed to light emerald on hover */
+      transform: translateY(-3px);
+      text-shadow: 0 0 10px rgba(110, 231, 183, 0.7);
+    }
+    
+    .nav-icon:hover i {
+      filter: drop-shadow(0 0 8px rgba(110, 231, 183, 0.7));
+    }
 
-  .logo {
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-    transition: transform 0.3s ease;
-  }
+    .logo {
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+      transition: all 0.3s ease;
+      background: linear-gradient(#0f172a, #0f172a) padding-box,
+                  linear-gradient(135deg, #8b5cf6 0%, #10b981 100%) border-box;
+    }
 
-  .logo:hover {
-    transform: scale(1.05);
-  }
-</style>
+    .logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); /* Green glow on hover */
+    }
 
+    /* Notification animations */
+    @keyframes slideIn {
+        from {
+            transform: translateY(0);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(100%);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            transform: translateY(-100%);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 0;
+        }
+    }
+
+    @keyframes progress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    .notification {
+      animation: slideIn 0.3s ease-out forwards;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-left: 4px solid #10b981; /* Green border by default */
+    }
+
+    .notification.slide-out {
+      animation: slideOut 0.3s ease-in forwards;
+    }
+
+    .progress-bar {
+      animation: progress 7s linear forwards;
+      background: linear-gradient(90deg, #8b5cf6 0%, #10b981 100%);
+      height: 3px;
+    }
+
+    /* Pulse effect for important notifications */
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } /* Green pulse */
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .notification.pulse {
+      animation: pulse 1.5s infinite, slideIn 0.3s ease-out forwards;
+    }
+
+    /* Gradient buttons */
+    .btn-gradient {
+      background: linear-gradient(135deg, #8b5cf6 0%, #10b981 100%);
+      transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+      background: linear-gradient(135deg, #7c3aed 0%, #059669 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Flash messages with gradient border */
+    .flash-message {
+      border-image: linear-gradient(135deg, #8b5cf6 0%, #10b981 100%) 1;
+      border-width: 0 0 0 4px;
+      border-style: solid;
+    }
+
+    /* Header gradient */
+    .header-gradient {
+      background: linear-gradient(135deg,rgb(15, 30, 66) 0%,rgb(2, 104, 72) 100%);
+      box-shadow: 0 4px 20px rgba(123, 92, 246, 0.3);
+    }
+
+    /* Footer styling */
+    .footer-gradient {
+      background: linear-gradient(135deg,rgb(12, 25, 54) 0%,rgb(3, 119, 82) 100%); /* More green in footer */
+      border-top: 1px solid rgba(4, 94, 64, 0.3); /* Green border */
+    }
+
+    /* Unread count badge */
+    .unread-badge {
+      background: linear-gradient(135deg, #8b5cf6 0%, #10b981 100%);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+    }
+
+    /* Active nav item indicator */
+    .nav-active {
+      color: #6ee7b7;
+      text-shadow: 0 0 8px rgba(110, 231, 183, 0.7);
+    }
+
+    .nav-active i {
+      filter: drop-shadow(0 0 8px rgba(110, 231, 183, 0.7));
+    }
+  </style>
 </head>
-<body class="bg-primary text-white font-sans min-h-screen">
-
-  <header class="bg-secondary p-4 shadow-lg flex justify-between items-center">
-    <div class="flex items-center space-x-4">
-      <a href="{% url 'home' %}">
-        <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" class="logo h-14 w-14">
-      </a>
-    </div>
-    <nav class="flex items-center space-x-4">
-      {% if user.is_authenticated %}
-      <a href="{% url 'my_posts' %}" class="nav-icon" title="My Posts">
-        <i class="fas fa-newspaper"></i>
-        <span>My Posts</span>
-      </a>
-      <a href="{% url 'inbox' %}" class="nav-icon" title="Chats">
-        <i class="fas fa-comments"></i>
-        <span>Chats</span>
-      </a>
-      <a href="{% url 'dashboard' %}" class="nav-icon" title="My Profile">
-        <i class="fas fa-user"></i>
-        <span>Profile</span>
-      </a>
-      <form method="POST" action="{% url 'logout' %}" class="inline">
-        {% csrf_token %}
-        <button type="submit" class="nav-icon hover:text-red-400" title="Logout">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
-        </button>
-      </form>
+<body class="text-white font-sans min-h-screen">
+  {% if user.is_authenticated %}
+  <header class="header-gradient p-4 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+      <!-- Logo on the left -->
+      <div class="flex-shrink-0">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" class="logo h-14 w-14">
+        </a>
+      </div>
       
-      {% else %}
-      <a href="{% url 'home' %}" class="nav-icon" title="Home">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="{% url 'login' %}" class="nav-icon" title="Login">
-        <i class="fas fa-sign-in-alt"></i>
-        <span>Login</span>
-      </a>
-      <a href="{% url 'register' %}" class="nav-icon" title="Register">
-        <i class="fas fa-user-plus"></i>
-        <span>Register</span>
-      </a>
-      {% endif %}
-    </nav>
+      <!-- Navigation links on the right -->
+      <div class="flex items-center space-x-6">
+        <a href="{% url 'my_posts' %}" class="nav-icon {% if request.path == '/my_posts/' %}nav-active{% endif %}" title="My Posts">
+          <i class="fas fa-newspaper"></i>
+          <span>My Posts</span>
+        </a>
+        <a href="{% url 'inbox' %}" class="nav-icon relative {% if request.path == '/inbox/' %}nav-active{% endif %}" title="Chats">
+          <i class="fas fa-comments"></i>
+          <span>Chats</span>
+          <span id="unread-count" 
+                class="unread-badge absolute -top-2 -right-2 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center {% if not unread_count %}hidden{% endif %}">
+              {% if unread_count %}{{ unread_count }}{% endif %}
+          </span>
+        </a>
+        <a href="{% url 'dashboard' %}" class="nav-icon {% if request.path == '/dashboard/' %}nav-active{% endif %}" title="My Profile">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+        <form method="POST" action="{% url 'logout' %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="nav-icon hover:text-red-400" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
 
     {% if messages %}
     <div id="flash-messages" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full px-4">
       {% for message in messages %}
-        <div class="bg-gray-800 border-l-4 p-4 mb-2 rounded shadow 
-                    {% if message.tags == 'success' %}border-green-400 text-green-300
-                    {% elif message.tags == 'error' or message.tags == 'danger' %}border-red-400 text-red-300
-                    {% elif message.tags == 'warning' %}border-yellow-400 text-yellow-300
-                    {% else %}border-blue-400 text-blue-300{% endif %}">
+        <div class="flash-message bg-gray-800 p-4 mb-2 rounded shadow-lg
+                    {% if message.tags == 'success' %}text-emerald-300
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}text-red-300
+                    {% elif message.tags == 'warning' %}text-yellow-300
+                    {% else %}text-purple-300{% endif %}">
           {{ message }}
         </div>
       {% endfor %}
     </div>
   {% endif %}
 
-  <script>
-    // Auto-dismiss flash messages ater 3 seconds
-    setTimeout(() => {
-      const flashMessages = document.getElementById('flash-messages');
-      if (flashMessages) {
-        flashMessages.style.opacity = '0';
-        flashMessages.style.transition = 'opacity 0.5s ease';
-
-        // Fully remove form DOM after fade-out
-        setTimeout(() => flashMessages.remove(), 500);
-      }
-    }, 3000);
-  </script>
-  
   </header>
 
-  <main class="p-6">
     {% block content %}{% endblock %}
-  </main>
+  
+{% if not hide_notification %}
+  <!-- Custom Notification Bar -->
+  <div id="notification-bar" class="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4 hidden transition-all duration-300 ease-out -translate-y-full">
+  <!-- Notifications will be dynamically inserted here -->
+  </div>
 
-  <footer class="bg-secondary p-4 text-center text-sm text-gray-400">
-    &copy; 2025 CamPulse | All rights reserved | &copy; AllgraceTimothy
+  <!-- Notification Template (hidden) -->
+  <template id="notification-template">
+      <div class="notification relative rounded-lg shadow-xl mb-2 overflow-hidden transition-all duration-300">
+          <div class="p-3">
+              <div class="flex items-start">
+                  <div class="flex-shrink-0 relative">
+                      <img class="h-10 w-10 rounded-full border border-gray-700" src="" alt="Profile">
+                      <div class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 border-2 border-gray-800"></div>
+                  </div>
+                  <div class="ml-3 flex-1">
+                      <div class="flex justify-between">
+                          <p class="text-sm font-medium text-white notification-title"></p>
+                          <span class="text-xs text-gray-400 notification-time">just now</span>
+                      </div>
+                      <p class="text-xs text-gray-300 notification-content mt-1"></p>
+                  </div>
+              </div>
+          </div>
+          <div class="progress-bar"></div>
+      </div>
+  </template>
+{% endif %}
+
+  {% if not user.is_authenticated %}
+  <footer class="footer-gradient p-4 text-center text-sm text-gray-400">
+    &copy; 2025 CamPulse | All rights reserved | AllgraceTimothy
   </footer>
+  {% endif %}
 
-</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationBar = document.getElementById('notification-bar');
+    const notificationTemplate = document.getElementById('notification-template');
+    let activeNotifications = 0;
+    const maxNotifications = 3;
+
+    function shouldShowNotifications() {
+    const currentPath = window.location.pathname;
+    
+    const excludedPaths = [
+        '/conv/',
+    ];
+    
+    return !excludedPaths.some(path => currentPath.startsWith(path));
+}
+
+    // Function to show notification bar
+    function showNotificationBar() {
+        notificationBar.classList.remove('hidden');
+        notificationBar.classList.remove('-translate-y-full');
+        notificationBar.classList.add('translate-y-0');
+    }
+
+    // Function to hide notification bar
+    function hideNotificationBar() {
+        notificationBar.classList.add('-translate-y-full');
+        notificationBar.classList.remove('translate-y-0');
+        
+        // Optionally hide completely after animation
+        setTimeout(() => {
+            if (activeNotifications === 0) {
+                notificationBar.classList.add('hidden');
+            }
+        }, 300);
+    }
+
+    // Function to show notification
+    function showNotification(type, data) {
+        // Show the notification bar with animation
+        showNotificationBar();
+        
+        // Create new notification from template
+        const notification = notificationTemplate.content.cloneNode(true);
+        const notificationElement = notification.querySelector('.notification');
+        const titleElement = notification.querySelector('.notification-title');
+        const contentElement = notification.querySelector('.notification-content');
+        const imageElement = notification.querySelector('img');
+        
+        // Set notification content based on type
+        if (type === 'message') {
+            titleElement.textContent = `${data.sender}`;
+            contentElement.textContent = data.content;
+            imageElement.src = data.sender_avatar || '/static/default-avatar.png';
+            notificationElement.style.borderLeftColor = '#10b981'; // Green border for messages
+            notificationElement.dataset.chatId = data.chat_id;
+        } else if (type === 'like') {
+            titleElement.textContent = `${data.liker} liked your post`;
+            contentElement.textContent = `"${data.post_content}"`;
+            imageElement.src = data.liker_avatar || '/static/default-avatar.png';
+            notificationElement.style.borderLeftColor = '#8b5cf6'; // Purple border for likes
+            notificationElement.classList.add('pulse');
+            notificationElement.dataset.postId = data.post_id;
+        }
+        
+        // Add click handler
+        notificationElement.addEventListener('click', function() {
+            if (type === 'message' && this.dataset.chatId) {
+                window.location.href = `/chat/conv/${this.dataset.chatId}/`;
+            } else if (type === 'like' && this.dataset.postId) {
+                window.location.href = `/post/${this.dataset.postId}/`;
+            }
+            removeNotification(this);
+        });
+        
+        // Auto-remove after 7 seconds
+        const autoRemove = setTimeout(() => {
+            removeNotification(notificationElement);
+        }, 7000);
+        
+        notificationElement.dataset.timeoutId = autoRemove;
+        
+        // Add to notification bar
+        if (activeNotifications >= maxNotifications) {
+            const oldest = notificationBar.firstChild;
+            if (oldest) removeNotification(oldest);
+        }
+        
+        notificationBar.appendChild(notification);
+        activeNotifications++;
+
+        // Browser notification if tab is not active
+        if (document.visibilityState !== 'visible' && Notification.permission === 'granted' && shouldShowNotifications()) {
+            const notification = new Notification(
+                type === 'message' 
+                    ? `New message from ${data.sender}` 
+                    : `${data.liker} liked your post`,
+                {
+                    body: type === 'message' 
+                        ? data.content 
+                        : `"${data.post_content}"`,
+                    icon: type === 'message' 
+                        ? data.sender_avatar 
+                        : data.liker_avatar
+                }
+            );
+      
+            notification.onclick = function() {
+                window.focus();
+                if (type === 'message') {
+                    window.location.href = `/chat/conv/${data.chat_id}/`;
+                } else {
+                    window.location.href = `/post/${data.post_id}/`;
+                }
+            };
+        }
+    }
+
+    function removeNotification(element) {
+        if (!element) return;
+        
+        clearTimeout(element.dataset.timeoutId);
+        element.classList.add('opacity-0', 'scale-95');
+        element.style.maxHeight = '0';
+        element.style.margin = '0';
+        element.style.padding = '0';
+        element.style.transition = 'all 0.3s ease-out';
+        
+        element.addEventListener('transitionend', () => {
+            element.remove();
+            activeNotifications--;
+            
+            if (activeNotifications === 0) {
+                hideNotificationBar();
+            }
+        });
+    }
+
+    // Function to update unread count
+    function updateUnreadCount() {
+        console.log('Fetching unread count...');
+        fetch(`/chat/get_unread_count/`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Unread count data:', data);
+                const unreadCountElement = document.getElementById('unread-count');
+                if (!unreadCountElement) {
+                    console.error('Unread count element not found');
+                    return;
+                }
+                
+                if (data.unread_count > 0) {
+                    unreadCountElement.textContent = data.unread_count;
+                    unreadCountElement.classList.remove('hidden');
+                } else {
+                    unreadCountElement.classList.add('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching unread count:', error);
+                const unreadCountElement = document.getElementById('unread-count');
+                if (unreadCountElement) {
+                    unreadCountElement.classList.add('hidden');
+                }
+            });
+    }
+
+    // Initial update and periodic checks
+    updateUnreadCount();
+    const countInterval = setInterval(updateUnreadCount, 3000);
+
+    // WebSocket connection for notifications
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const notificationSocket = new WebSocket(
+        protocol + window.location.host + '/ws/notifications/'
+    );
+
+    notificationSocket.onopen = function(e) {
+        console.log('WebSocket connection established');
+    };
+
+    notificationSocket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
+
+    notificationSocket.onmessage = function(e) {
+        console.log('WebSocket message received:', e.data);
+        const data = JSON.parse(e.data);
+
+        if (!shouldShowNotifications()) {
+            console.log('Notifications disabled for this page');
+            return;
+        }
+        
+        if (data.type === 'new_message') {
+            showNotification('message', {
+                sender: data.sender,
+                sender_avatar: data.sender_avatar,
+                content: data.content,
+                chat_id: data.chat_id
+            });
+            updateUnreadCount();
+        } 
+        else if (data.type === 'post_like') {
+            showNotification('like', {
+                liker: data.liker,
+                liker_avatar: data.liker_avatar,
+                post_content: data.post_content,
+                post_id: data.post_id
+            });
+        }
+    };
+
+    notificationSocket.onclose = function(e) {
+        console.log('WebSocket closed, reconnecting...', e);
+        setTimeout(function() {
+            document.dispatchEvent(new Event('DOMContentLoaded'));
+        }, 5000);
+    };
+
+    // Request notification permission
+    if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission().then(function(permission) {
+            console.log('Notification permission:', permission);
+        });
+    }
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', function() {
+        clearInterval(countInterval);
+        if (notificationSocket.readyState === WebSocket.OPEN) {
+            notificationSocket.close();
+        }
+    });
+
+    // Auto-dismiss flash messages after 3 seconds
+    setTimeout(() => {
+        const flashMessages = document.getElementById('flash-messages');
+        if (flashMessages) {
+            flashMessages.style.opacity = '0';
+            flashMessages.style.transition = 'opacity 0.5s ease';
+
+            // Fully remove from DOM after fade-out
+            setTimeout(() => flashMessages.remove(), 500);
+        }
+    }, 3000);
+});
+</script>
 </html>

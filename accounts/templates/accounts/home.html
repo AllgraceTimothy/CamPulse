@@ -5,36 +5,39 @@
 {% block content %}
 {% if not user.is_authenticated %}
 <!-- Hero Section for Unauthenticated Users -->
-<section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-gray-900 px-4 py-20 relative overflow-hidden">
+<section class="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden bg-gradient-to-br from-primary via-gray-900 to-gray-900">
   <!-- Animated background elements -->
   <div class="absolute inset-0 opacity-10">
-    <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-accent blur-3xl animate-pulse"></div>
-    <div class="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full bg-purple-500 blur-3xl animate-pulse delay-300"></div>
+    <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-purple-500 blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full bg-emerald-500 blur-3xl animate-pulse delay-300"></div>
   </div>
   
   <div class="text-center max-w-4xl relative z-10">
     <div class="animate-fadeIn">
-      <!-- Added Logo Here -->
+      <!-- Logo with gradient border -->
       <div class="flex justify-center mb-8">
-        <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" 
-             class="logo h-32 w-32 mx-auto rounded-full object-cover 
-                    border-2 border-accent/20 hover:border-accent/40
-                    transition-all duration-300">
+        <div class="relative">
+          <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" 
+               class="logo h-32 w-32 mx-auto rounded-full object-cover 
+                      border-2 border-transparent
+                      transition-all duration-500">
+          <div class="absolute inset-0 rounded-full p-1 z-[-1] bg-gradient-to-br from-purple-500 to-emerald-500 animate-spin-slow" style="animation-duration: 10s;"></div>
+        </div>
       </div>
       
       <span class="text-4xl md:text-6xl font-extrabold text-white mb-4 block">Hii there 👋🏽</span>
       <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">
-        Welcome to <span class="text-accent">CamPulse</span>
+        Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">CamPulse</span>
       </h1>
       <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
         Your digital space to connect, share, and thrive with fellow students. Dive into campus events, chat with classmates, and post what matters to you.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-        <a href="{% url 'register' %}" class="bg-accent hover:bg-blue-500 text-white px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
-          Get Started
+        <a href="{% url 'register' %}" class="btn-gradient text-white px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Get Started <i class="fas fa-arrow-right ml-2"></i>
         </a>
-        <a href="{% url 'login' %}" class="text-white border-2 border-accent hover:bg-accent px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
-          Log In
+        <a href="{% url 'login' %}" class="text-white border-2 border-emerald-400 hover:bg-emerald-900/30 px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Log In <i class="fas fa-sign-in-alt ml-2"></i>
         </a>
       </div>
     </div>
@@ -42,25 +45,38 @@
 </section>
 
 <!-- Features Section -->
-<section class="py-20 px-4 bg-gray-900 relative overflow-hidden">
+<section class="py-20 px-4 bg-gradient-to-b from-gray-900 to-primary relative overflow-hidden">
   <!-- Background pattern -->
   <div class="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC41IiBzdHJva2Utb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMCAwaDQwdDQwdjQwSDB6Ii8+PC9zdmc+')]"></div>
   
   <div class="max-w-7xl mx-auto relative z-10">
-    <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-16">Why Join CamPulse ?</h2>
+    <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-16">
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">Why Join CamPulse?</span>
+    </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-secondary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
-        <div class="text-accent text-4xl mb-4">🎓</div>
+      <!-- Feature Card 1 -->
+      <div class="feature-card bg-gradient-to-b from-secondary to-primary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
+        <div class="feature-icon bg-gradient-to-br from-purple-500 to-emerald-500 text-white text-4xl mb-4 w-16 h-16 flex items-center justify-center rounded-full mx-auto">
+          🎓
+        </div>
         <h3 class="text-2xl font-semibold text-white mb-3">Student-Only Space</h3>
         <p class="text-gray-300">Accounts are verified with student emails. It's your campus, online.</p>
       </div>
-      <div class="bg-secondary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
-        <div class="text-accent text-4xl mb-4">💬</div>
+      
+      <!-- Feature Card 2 -->
+      <div class="feature-card bg-gradient-to-b from-secondary to-primary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
+        <div class="feature-icon bg-gradient-to-br from-purple-500 to-emerald-500 text-white text-4xl mb-4 w-16 h-16 flex items-center justify-center rounded-full mx-auto">
+          💬
+        </div>
         <h3 class="text-2xl font-semibold text-white mb-3">Chat & Discussions</h3>
         <p class="text-gray-300">Join open topics, chat with peers, or slide into DMs responsibly.</p>
       </div>
-      <div class="bg-secondary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
-        <div class="text-accent text-4xl mb-4">📅</div>
+      
+      <!-- Feature Card 3 -->
+      <div class="feature-card bg-gradient-to-b from-secondary to-primary rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-800/50">
+        <div class="feature-icon bg-gradient-to-br from-purple-500 to-emerald-500 text-white text-4xl mb-4 w-16 h-16 flex items-center justify-center rounded-full mx-auto">
+          📅
+        </div>
         <h3 class="text-2xl font-semibold text-white mb-3">Campus Events</h3>
         <p class="text-gray-300">Never miss out — view or post about club meetups, parties, and more.</p>
       </div>
@@ -72,24 +88,15 @@
 
 <!-- Authenticated User Feed -->
 <section class="py-16 px-4">
-    <!-- Feed Header -->
-    <div class="sticky top-0 z-10 bg-primary/90 backdrop-blur-sm py-4 px-2 mb-6 rounded-lg">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-white">Campus Feed</h2>
-          <p class="text-gray-400 text-sm">See what's buzzing in Kenyan Campuses</p>
-        </div>
-      </div>
-    </div>
-    
     <!-- Posts -->
     <div class="space-y-6 mt-4">
       {% for post in posts %}
-      <div class="bg-secondary rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl animate-slideUp border border-gray-800/50 max-w-3xl mx-auto">
+      <div class="post-card bg-gradient-to-b from-secondary to-primary rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl animate-slideUp border border-gray-800/50 max-w-3xl mx-auto">
         <!-- Post Header -->
         <div class="flex items-center justify-between p-6">
           <div class="flex items-center">
-            <div class="h-12 w-12 rounded-full bg-gray-700 overflow-hidden mr-4">
+            {% if post.author.username == request.user.username %}
+              <div class="h-12 w-12 rounded-full bg-gray-700 overflow-hidden mr-4 border-2 border-transparent bg-clip-padding" style="background-image: linear-gradient(#1e293b, #1e293b), linear-gradient(135deg, #8b5cf6 0%, #10b981 100%); background-origin: border-box;">
               {% if post.author.profile.profile_pic %}
                 <img src="{{ post.author.profile.profile_pic.url }}" class="h-full w-full object-cover">
               {% else %}
@@ -98,6 +105,20 @@
                 </div>
               {% endif %}
             </div>
+            {% else %}
+            <a href="{% url 'view_profile' post.author.username %}" class="text-sm text-blue-400 hover:underline">
+            <div class="h-12 w-12 rounded-full bg-gray-700 overflow-hidden mr-4 border-2 border-transparent bg-clip-padding" style="background-image: linear-gradient(#1e293b, #1e293b), linear-gradient(135deg, #8b5cf6 0%, #10b981 100%); background-origin: border-box;">
+              {% if post.author.profile.profile_pic %}
+                <img src="{{ post.author.profile.profile_pic.url }}" class="h-full w-full object-cover">
+              {% else %}
+                <div class="h-full w-full flex items-center justify-center text-white text-xl">
+                  {{ post.author.username|first|upper }}
+                </div>
+              {% endif %}
+            </div>
+              </a>
+              {% endif %}
+
             <div>
               <h4 class="font-medium text-white">{{ post.author.username }}</h4>
               <p class="text-xs text-gray-400">{{ post.created_at|naturaltime }}</p>
@@ -113,7 +134,7 @@
         <!-- Media -->
         {% if post.image %}
         <div class="border-t border-gray-800">
-          <img src="{{ post.image.url }}" class="w-full max-h-96 object-cover" alt="Post image">
+          <img src="{{ post.image.url }}" class="w-full max-h-96 object-contain" alt="Post image">
         </div>
         {% endif %}
         
@@ -136,20 +157,20 @@
         <div class="px-6 py-3 border-t border-gray-800 flex justify-between">
           <form method="POST" action="{% url 'like_post' post.id %}" class="flex-1">
             {% csrf_token %}
-            <button type="submit" class="w-full flex items-center justify-center space-x-2 text-gray-400 hover:text-accent transition py-2 rounded-lg hover:bg-gray-800/50">
+            <button type="submit" class="w-full flex items-center justify-center space-x-2 text-gray-400 hover:text-purple-400 transition py-2 rounded-lg hover:bg-gray-800/50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <span>Like</span>
             </button>
           </form>
-          <button onclick="openCommentsModal('{{ post.id }}')" class="flex-1 flex items-center justify-center space-x-2 text-gray-400 hover:text-accent transition py-2 rounded-lg hover:bg-gray-800/50">
+          <button onclick="openCommentsModal('{{ post.id }}')" class="flex-1 flex items-center justify-center space-x-2 text-gray-400 hover:text-emerald-400 transition py-2 rounded-lg hover:bg-gray-800/50">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0 4.418 4.03 8 9 8s9 3.582 9 8z" />
             </svg>
             <span>Comment</span>
           </button>
-          <button class="flex-1 flex items-center justify-center space-x-2 text-gray-400 hover:text-accent transition py-2 rounded-lg hover:bg-gray-800/50">
+          <button class="flex-1 flex items-center justify-center space-x-2 text-gray-400 hover:text-purple-400 transition py-2 rounded-lg hover:bg-gray-800/50">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
@@ -160,7 +181,7 @@
       
       <!-- Comments Modal for this post -->
       <div id="comments-modal-{{ post.id }}" class="hidden fixed inset-0 bg-black bg-opacity-70 z-30 flex items-center justify-center p-4">
-        <div class="bg-secondary rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col relative">
+        <div class="bg-gradient-to-b from-secondary to-primary rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col relative border border-gray-800/50">
           <div class="p-4 border-b border-gray-800 sticky top-0 bg-secondary rounded-t-2xl">
             <div class="flex items-center justify-between">
               <h3 class="text-xl font-bold text-white">Comments</h3>
@@ -172,67 +193,67 @@
             </div>
           </div>
           
-<!-- Comments Section -->
-        <div class="p-4 overflow-y-auto flex-1">
-          <div class="space-y-4">
-              {% for comment in post.comments.all %}
-              <div class="flex items-start group">
-                  <div class="h-8 w-8 rounded-full bg-gray-700 overflow-hidden mr-3 flex-shrink-0">
-                      {% if comment.user.profile.profile_pic %}
-                          <img src="{{ comment.user.profile.profile_pic.url }}" class="h-full w-full object-cover">
-                      {% else %}
-                          <div class="h-full w-full flex items-center justify-center text-white text-sm">
-                              {{ comment.user.username|first|upper }}
-                          </div>
-                      {% endif %}
-                  </div>
-                  <div class="flex-1">
-                      <div class="bg-gray-800 rounded-lg p-3 relative">
-                          <p class="font-medium text-white text-sm">{{ comment.user.username }}</p>
-                          <p class="text-gray-300 text-sm">{{ comment.content }}</p>
-                          
-                  <!-- Delete button (only shows for comment creator) -->
-                  {% if comment.user == request.user %}
-                  <form action="{% url 'delete_comment' comment.id %}" method="POST" 
-                        class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center 
-                              opacity-0 group-hover:opacity-100 transition-opacity duration-200
-                              hover:bg-red-900/30 hover:backdrop-blur-sm">
-                      {% csrf_token %}
-                      <button type="submit" class="h-full w-full flex items-center justify-center
-                                                  text-gray-400 hover:text-red-500 hover:scale-110
-                                                  transition-all duration-200 group/delete">
-                          <svg xmlns="http://www.w3.org/2000/svg" 
-                              class="h-5 w-5 group-hover/delete:drop-shadow-[0_0_4px_rgba(239,68,68,0.8)] 
-                                    transition-all duration-200" 
-                              fill="none" viewBox="0 0 24 24" 
-                              stroke="currentColor">
-                              <path stroke-linecap="round" 
-                                    stroke-linejoin="round" 
-                                    stroke-width="2" 
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                      </button>
-                  </form>
-                  {% endif %}
-                      </div>
-                      <p class="text-gray-500 text-xs mt-1">{{ comment.created_at|naturaltime }}</p>
-                  </div>
-              </div>
-              {% empty %}
-              <div class="text-center py-8">
-                  <p class="text-gray-400">No comments yet. Be the first to comment!</p>
-              </div>
-              {% endfor %}
+          <!-- Comments Section -->
+          <div class="p-4 overflow-y-auto flex-1">
+            <div class="space-y-4">
+                {% for comment in post.comments.all %}
+                <div class="flex items-start group">
+                    <div class="h-8 w-8 rounded-full bg-gray-700 overflow-hidden mr-3 flex-shrink-0 border border-emerald-500/30">
+                        {% if comment.user.profile.profile_pic %}
+                            <img src="{{ comment.user.profile.profile_pic.url }}" class="h-full w-full object-cover">
+                        {% else %}
+                            <div class="h-full w-full flex items-center justify-center text-white text-sm">
+                                {{ comment.user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <div class="bg-gray-800 rounded-lg p-3 relative">
+                            <p class="font-medium text-white text-sm">{{ comment.user.username }}</p>
+                            <p class="text-gray-300 text-sm">{{ comment.content }}</p>
+                            
+                            <!-- Delete button (only shows for comment creator) -->
+                            {% if comment.user == request.user %}
+                            <form action="{% url 'delete_comment' comment.id %}" method="POST" 
+                                  class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center 
+                                        opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                                        hover:bg-red-900/30 hover:backdrop-blur-sm">
+                                {% csrf_token %}
+                                <button type="submit" class="h-full w-full flex items-center justify-center
+                                                        text-gray-400 hover:text-red-500 hover:scale-110
+                                                        transition-all duration-200 group/delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" 
+                                        class="h-5 w-5 group-hover/delete:drop-shadow-[0_0_4px_rgba(239,68,68,0.8)] 
+                                              transition-all duration-200" 
+                                        fill="none" viewBox="0 0 24 24" 
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" 
+                                              stroke-linejoin="round" 
+                                              stroke-width="2" 
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        <p class="text-gray-500 text-xs mt-1">{{ comment.created_at|naturaltime }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-8">
+                    <p class="text-gray-400">No comments yet. Be the first to comment!</p>
+                </div>
+                {% endfor %}
+            </div>
           </div>
-        </div>
           
           <!-- Add Comment Form -->
           <div class="p-4 border-t border-gray-800 sticky bottom-0 bg-secondary rounded-b-2xl">
             <form method="POST" action="{% url 'add_comment' post.id %}" class="flex items-center">
               {% csrf_token %}
               <input type="text" name="comment" placeholder="Write a comment..." 
-                     class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-accent focus:border-transparent text-sm">
-              <button type="submit" class="ml-2 text-accent hover:text-blue-400">
+                     class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-transparent text-sm">
+              <button type="submit" class="ml-2 text-emerald-400 hover:text-emerald-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
@@ -250,8 +271,8 @@
         </div>
         <h3 class="text-2xl text-white font-medium mb-3">No posts yet</h3>
         <p class="text-gray-400 mb-6">Be the first to share something with your campus!</p>
-        <a href="{% url 'my_posts' %}" class="bg-accent hover:bg-blue-500 text-white px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
-          Create First Post
+        <a href="{% url 'my_posts' %}" class="btn-gradient text-white px-8 py-4 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Create First Post <i class="fas fa-plus ml-2"></i>
         </a>
       </div>
       {% endfor %}
@@ -303,7 +324,7 @@
   }
   
   .overflow-y-auto::-webkit-scrollbar-thumb {
-    background: #4b5563;
+    background:rgb(4, 87, 15);
     border-radius: 2px;
   }
   
@@ -313,16 +334,53 @@
 
   /* Logo styling */
   .logo {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
     transform: scale(1);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   }
   .logo:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
   }
-  .group:hover .group-hover\:opacity-100 {
-    opacity: 1;
+  
+  /* Feature card styling */
+  .feature-card {
+    transition: all 0.3s ease;
+  }
+  .feature-card:hover {
+    border-color: rgba(2, 95, 18, 0.5);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .feature-icon {
+    transition: all 0.3s ease;
+  }
+  .feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  }
+  
+  /* Post card styling */
+  .post-card {
+    transition: all 0.3s ease;
+  }
+  .post-card:hover {
+    border-color: rgba(139, 92, 246, 0.5);
+  }
+  
+  /* Rotating gradient border animation */
+  @keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .animate-spin-slow {
+    animation: spin-slow 10s linear infinite;
+  }
+  
+  /* Button hover effects */
+  .btn-gradient:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #059669 100%);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
   }
 </style>
 {% endblock %}

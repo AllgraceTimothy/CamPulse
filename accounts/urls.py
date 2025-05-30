@@ -15,4 +15,5 @@ urlpatterns = [
     path('update-dp/', views.update_profile_pic, name='update_profile_pic'),
     path('oauth/complete/google-oauth2/', views.auth_complete, {'backend': 'google-oauth2'}, name='complete'),
     path('password-reset/', views.password_reset_request, name='password_reset'),
+    path('profile/<str:username>/', views.view_profile, name='view_profile'),
 ]

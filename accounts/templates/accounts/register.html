@@ -1,23 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-gray-900 px-4 py-12">
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
   <div class="w-full max-w-md animate-card">
     <!-- Logo/Branding -->
     <div class="text-center mb-8">
-      <!-- Large Rounded Logo -->
+      <!-- Large Rounded Logo with Gradient Border -->
       <div class="flex justify-center mb-4">
-        <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" 
-        class="logo h-28 w-28 mx-auto rounded-full object-cover 
-               border-2 border-accent/20 hover:border-accent/40
-               transition-all duration-300">
+        <div class="profile-pic-container">
+          <img src="{% static 'favicon.png' %}" alt="CamPulse Logo" 
+             class="logo h-28 w-28 mx-auto rounded-full object-cover 
+                    border-2 border-accent/20 hover:border-accent/40
+                    transition-all duration-300">
+        </div>
       </div>
-      <p class="text-gray-300">Create your account to get started</p>
+      <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400 mb-2">
+        Join Our Community
+      </h2>
+      <p class="text-gray-400">Create your account to get started</p>
     </div>
 
-    <!-- Rest of your existing registration card code remains exactly the same -->
     <!-- Registration Card -->
-    <div class="bg-secondary rounded-2xl shadow-xl overflow-hidden transition-all transform hover:shadow-2xl">
+    <div class="bg-gray-800/50 rounded-2xl shadow-xl overflow-hidden transition-all transform hover:shadow-2xl border border-gray-700/30 backdrop-blur-sm">
       <div class="p-8">
         {% if form.errors %}
         <div class="mb-6 p-3 bg-red-900/30 border border-red-700 rounded-lg text-red-300 flex items-center">
@@ -52,7 +56,7 @@
                 type="text" 
                 name="username" 
                 required
-                class="w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+                class="w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 placeholder="Choose a username"
                 value="{{ form.username.value|default:'' }}"
               >
@@ -75,7 +79,7 @@
                 type="email" 
                 name="email" 
                 required
-                class="w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+                class="w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 placeholder="yourname@students.[university].ac.ke"
                 value="{{ form.email.value|default:'' }}"
               >
@@ -99,7 +103,7 @@
                 type="password" 
                 name="password1" 
                 required
-                class="w-full pl-10 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+                class="w-full pl-10 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 placeholder="Create a password"
               >
               <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password1-field', 'eye-icon1')">
@@ -128,7 +132,7 @@
                 type="password" 
                 name="password2" 
                 required
-                class="w-full pl-10 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition"
+                class="w-full pl-10 pr-10 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 placeholder="Confirm your password"
               >
               <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password2-field', 'eye-icon2')">
@@ -145,11 +149,14 @@
 
           <!-- Submit Button -->
           <div>
-            <button type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-accent hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-all transform hover:scale-[1.02]">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Create Account
+            <button type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gradient-to-r from-purple-600 to-emerald-600 hover:from-purple-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all transform hover:scale-[1.02] group">
+              <span class="relative z-10 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Create Account
+              </span>
+              <span class="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-emerald-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></span>
             </button>
           </div>
         </form>
@@ -160,7 +167,7 @@
             <div class="w-full border-t border-gray-700"></div>
           </div>
           <div class="relative flex justify-center">
-            <span class="bg-secondary px-3 text-sm text-gray-400">OR CONTINUE WITH</span>
+            <span class="bg-gray-800/50 px-3 text-sm text-gray-400">OR CONTINUE WITH</span>
           </div>
         </div>
 
@@ -175,10 +182,10 @@
       </div>
 
       <!-- Footer Links -->
-      <div class="px-8 py-4 bg-gray-800/50 text-center">
+      <div class="px-8 py-4 bg-gray-800/30 text-center border-t border-gray-700/30">
         <p class="text-gray-400 text-sm">
           Already have an account? 
-          <a href="{% url 'login' %}" class="font-medium text-accent hover:text-blue-400 transition">Sign in</a>
+          <a href="{% url 'login' %}" class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400 hover:from-purple-300 hover:to-emerald-300 transition">Sign in</a>
         </p>
       </div>
     </div>
@@ -186,6 +193,35 @@
 </div>
 
 <style>
+  /* Profile picture with gradient border */
+  .profile-pic-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+  }
+  
+  .profile-pic-container::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #10b981 100%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: spin-slow 10s linear infinite;
+  }
+  
+  @keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .profile-pic-img {
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+
   /* Animation for the login card */
   .animate-card {
     animation: fadeInUp 0.6s ease-out forwards;
@@ -202,16 +238,16 @@
     }
   }
 
-  /* Logo styling to match base template */
-    .logo {
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-      transform: scale(1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .logo:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-    }
+  /* Input focus effects */
+  input:focus {
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  }
+
+  /* Button hover effect */
+  .btn-hover-effect:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
 </style>
 
 <script>

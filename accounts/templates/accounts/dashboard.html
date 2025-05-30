@@ -6,27 +6,50 @@
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(4px);
   }
+  
   .modal-content {
     max-height: 90vh;
     animation: modalFadeIn 0.3s ease-out;
   }
+  
   @keyframes modalFadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  
   .profile-pic-img {
     transition: opacity 0.3s ease;
+  }
+  
+  /* Gradient border for profile picture */
+  .profile-pic-container {
+    position: relative;
+  }
+  
+  .profile-pic-container::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #10b981 100%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: spin-slow 10s linear infinite;
+  }
+  
+  @keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto bg-secondary p-8 rounded-xl shadow-lg">
-
+</br>
+<div class="max-w-4xl mx-auto bg-gradient-to-b from-secondary to-primary p-8 rounded-xl shadow-lg border border-gray-800/50 animate-slideUp">
   <div class="flex items-center mb-8">
-    <h2 class="text-3xl font-bold text-white">👤 Profile Settings</h2>
+    <h2 class="text-3xl font-bold text-white">👤 <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">Profile Settings</span></h2>
     <div class="ml-auto">
-      <button type="submit" form="profileForm" class="bg-accent hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center">
+      <button type="submit" form="profileForm" class="bg-gradient-to-r from-purple-500 to-emerald-500 hover:from-purple-600 hover:to-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
           <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293z" />
         </svg>
@@ -38,11 +61,11 @@
   <div class="flex flex-col lg:flex-row gap-8">
     <!-- Profile Picture Section -->
     <div class="lg:w-1/3">
-      <div class="bg-gray-800 p-6 rounded-xl shadow-inner">
+      <div class="bg-gray-800/50 p-6 rounded-xl shadow-inner backdrop-blur-sm border border-gray-700/30">
         <div class="flex flex-col items-center">
-          <div class="relative mb-4">
-            <img src="{{ profile.profile_pic.url }}" class="profile-pic-img w-40 h-40 rounded-full border-2 border-accent object-cover shadow-lg" alt="Profile Picture">
-            <label for="id_profile_pic" class="absolute bottom-0 right-0 bg-accent hover:bg-blue-500 text-white p-2 rounded-full cursor-pointer transition-all">
+          <div class="profile-pic-container mb-4">
+            <img src="{{ profile.profile_pic.url }}" class="profile-pic-img w-40 h-40 rounded-full object-cover shadow-lg" alt="Profile Picture">
+            <label for="id_profile_pic" class="absolute bottom-0 right-0 bg-gradient-to-br from-purple-500 to-emerald-500 hover:from-purple-600 hover:to-emerald-600 text-white p-2 rounded-full cursor-pointer transition-all transform hover:scale-110 shadow-md">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
               </svg>
@@ -54,7 +77,7 @@
             <div class="flex items-center">
               <h3 class="text-xl font-semibold text-white mr-2">{{ user.username }}</h3>
               <!-- Pencil Button to Activate Modal -->
-              <button onclick="document.getElementById('username-modal').classList.remove('hidden')" class="text-gray-400 hover:text-accent transition transform hover:scale-110">
+              <button onclick="document.getElementById('username-modal').classList.remove('hidden')" class="text-gray-400 hover:text-purple-400 transition transform hover:scale-110">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
@@ -76,35 +99,35 @@
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-2">Course</label>
             <input type="text" name="course" value="{{ form.course.value }}" 
-                   class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition">
+                   class="w-full bg-gray-800/50 border border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition focus:shadow-lg focus:shadow-purple-500/20">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-2">Year of Study</label>
             <input type="text" name="year_of_study" value="{{ form.year_of_study.value }}" 
-                   class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition">
+                   class="w-full bg-gray-800/50 border border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition focus:shadow-lg focus:shadow-purple-500/20">
           </div>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-2">Bio</label>
-          <textarea name="bio" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition min-h-[180px]">{{ form.bio.value }}</textarea>
+          <textarea name="bio" class="w-full bg-gray-800/50 border border-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition min-h-[180px] focus:shadow-lg focus:shadow-purple-500/20">{{ form.bio.value }}</textarea>
         </div>
 
         <!-- Social Media Links -->
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-2">Social Links</label>
           <div class="space-y-3">
-            <div class="flex items-center bg-gray-800 rounded-lg px-4 py-2">
+            <div class="flex items-center bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-2 backdrop-blur-sm hover:border-purple-500/30 transition">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
-              <input type="text" name="instagram" value="{{ user.profile.instagram }}" placeholder="Instagram" class="bg-transparent text-white w-full focus:outline-none">
+              <input type="text" name="instagram" value="{{ user.profile.instagram }}" placeholder="Instagram" class="bg-transparent text-white w-full focus:outline-none placeholder-gray-500">
             </div>
-            <div class="flex items-center bg-gray-800 rounded-lg px-4 py-2">
+            <div class="flex items-center bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-2 backdrop-blur-sm hover:border-emerald-500/30 transition">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z"/>
               </svg>
-              <input type="text" name="linkedin" value="{{ user.profile.linkedin }}" placeholder="LinkedIn" class="bg-transparent text-white w-full focus:outline-none">
+              <input type="text" name="linkedin" value="{{ user.profile.linkedin }}" placeholder="LinkedIn" class="bg-transparent text-white w-full focus:outline-none placeholder-gray-500">
             </div>
           </div>
         </div>
@@ -115,9 +138,9 @@
 
 <!-- Username Edit Modal -->
 <div id="username-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
-  <div class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative">
+  <div class="bg-gradient-to-b from-secondary to-primary rounded-2xl shadow-2xl w-full max-w-md p-6 relative border border-gray-800/50">
     <button onclick="closeUsernameModal()" 
-            class="absolute top-4 right-4 text-gray-400 hover:text-white">
+            class="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800/50 rounded-full p-1">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
@@ -127,7 +150,7 @@
       {% csrf_token %}
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-1">Current Username</label>
-        <input type="text" value="{{ user.username }}" class="w-full bg-gray-700 border border-gray-600 text-gray-300 rounded px-3 py-2" disabled>
+        <input type="text" value="{{ user.username }}" class="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg px-3 py-2" disabled>
       </div>
       
       <div>
@@ -135,7 +158,7 @@
         <input type="text" name="username" value="{{ user.username }}" 
               pattern="[\w.@+-]+" minlength="4" maxlength="150"
               title="Username must be 4-150 characters. Only letters, digits and @/./+/-/_ allowed."
-              class="w-full bg-gray-700 border border-gray-600 text-white rounded px-3 py-2 focus:ring-2 focus:ring-accent outline-none transition"
+              class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
               required>
       </div>
 
@@ -143,13 +166,15 @@
         <button type="button" onclick="closeUsernameModal()" class="px-4 py-2 text-gray-300 hover:text-white rounded-lg transition">
           Cancel
         </button>
-        <button type="submit" class="bg-accent hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium transition-all">
+        <button type="submit" class="bg-gradient-to-r from-purple-500 to-emerald-500 hover:from-purple-600 hover:to-emerald-600 text-white px-4 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-md">
           Update
         </button>
       </div>
     </form>
   </div>
 </div>
+</br>
+
 
 {% block extra_scripts %}
 <script>
@@ -179,37 +204,52 @@
     return true;
   });
 
-    // Handle profile picture upload
-    document.getElementById('id_profile_pic').addEventListener('change', function(e) {
-      if (this.files.length > 0) {
-        const formData = new FormData();
-        formData.append('profile_pic', this.files[0]);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-        
-        // Show loading state on the profile picture
-        const profilePic = document.querySelector('.profile-pic-img');
-        profilePic.classList.add('opacity-50');
-        
-        fetch('{% url "update_profile_pic" %}', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            profilePic.src = data.url;
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          showToast('An error occurred', 'error');
-        })
-        .finally(() => {
-          profilePic.classList.remove('opacity-50');
-        });
-      }
-    });
-  
+  // Handle profile picture upload
+  document.getElementById('id_profile_pic').addEventListener('change', function(e) {
+    if (this.files.length > 0) {
+      const formData = new FormData();
+      formData.append('profile_pic', this.files[0]);
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      
+      // Show loading state on the profile picture
+      const profilePic = document.querySelector('.profile-pic-img');
+      profilePic.classList.add('opacity-50');
+      
+      fetch('{% url "update_profile_pic" %}', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          profilePic.src = data.url;
+          showToast('Profile picture updated successfully!', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred', 'error');
+      })
+      .finally(() => {
+        profilePic.classList.remove('opacity-50');
+      });
+    }
+  });
+
+  // Toast notification function
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg text-white font-medium z-50 animate-fadeIn ${
+      type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
+    }`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
 </script>
 {% endblock %}
 {% endblock %}

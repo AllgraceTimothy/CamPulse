@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from .forms import UserRegisterForm, ProfileForm, UsernameChangeForm
@@ -10,6 +10,7 @@ from .utils import send_verification_email, generate_random_password
 from django.utils import timezone
 from datetime import timedelta
 from social.models import Post
+from chat.models import Chat
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from social_django.models import UserSocialAuth
@@ -23,6 +24,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth import get_user_model
+from django.db.models import Q, Count
+User = get_user_model()
 
 def home_view(request):
   posts = Post.objects.all().order_by('-created_at')
@@ -123,7 +127,7 @@ def login_view(request):
             else:
                 messages.error(request, 'Your account is not verified. Please check your email.')
         else:
-            messages.error(request, 'Invalid email or password.')
+            messages.error(request, 'Invalid username or password.')
     return render(request, 'accounts/login.html', {
         'oauth_success': oauth_success,
         'form_reg_success': form_reg_success
@@ -185,6 +189,24 @@ def dashboard_view(request):
 
     return render(request, 'accounts/dashboard.html', {'form': form, 'profile': profile})
 
+
+def view_profile(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=profile_user)
+    posts = Post.objects.filter(author=profile_user).order_by('-created_at')
+
+    chat = None
+    if request.user.is_authenticated and request.user != profile_user:
+        chat = Chat.objects.filter(participants=request.user).filter(participants=profile_user).distinct().first()
+
+    context = {
+        'profile_user': profile_user,
+        'profile': profile,
+        'posts': posts,
+        'chat': chat,
+    }
+    return render(request, 'accounts/view_profile.html', context)
+
 @login_required
 def change_username(request):
     if request.method == 'POST':
@@ -206,7 +228,6 @@ def update_profile_pic(request):
     if 'profile_pic' in request.FILES:
         profile.profile_pic = request.FILES['profile_pic']
         profile.save()
-        messages.success(request, 'Profile picture updated successfully!')
         return JsonResponse({
             'success': True,
             'url': profile.profile_pic.url
@@ -245,5 +266,5 @@ def password_reset_request(request):
 
 class CustomLogoutView(LogoutView):
   def dispatch(self, request, *args, **kwargs):
-    messages.success(request, "You have been logged out successfully.")
+    messages.info(request, "You have been logged out successfully.")
     return super().dispatch(request, *args, **kwargs)

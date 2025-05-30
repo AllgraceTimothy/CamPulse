@@ -27,9 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
+
 SITE_ID = 1
-ALLOWED_HOSTS = ['campulse.up.railway.app', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
+
 SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
 
 # Application definition
@@ -117,7 +119,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = True 
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = [
-    'https://campulse.up.railway.app',
+    'https://campulse.onrender.com',
     'http://127.0.0.1',
 ]
 
